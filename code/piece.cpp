@@ -26,4 +26,6 @@ char Piece::getIdentifier(){
 	return identifier;
 }
 
-
+void Piece::makeMove(int * toPosition){
+	position = toPosition;
+}

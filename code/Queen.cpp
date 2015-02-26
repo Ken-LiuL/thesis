@@ -10,14 +10,6 @@ bool Queen::moveIsLegal(int * toPosition){
 	return 1;	
 }
 
-void Queen::makeMove(int * toPosition){
-	if(Queen::moveIsLegal(toPosition)){
-		;
-	}
-	else{
-		;
-	}
-}
 
 int ** Queen::legalMoves(){
 	

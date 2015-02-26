@@ -10,14 +10,6 @@ bool King::moveIsLegal(int * toPosition){
 	return 1;	
 }
 
-void King::makeMove(int * toPosition){
-	if(King::moveIsLegal(toPosition)){
-		;
-	}
-	else{
-		;
-	}
-}
 
 int ** King::legalMoves(){
 	

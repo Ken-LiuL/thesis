@@ -10,14 +10,6 @@ bool Knight::moveIsLegal(int * toPosition){
 	return 1;	
 }
 
-void Knight::makeMove(int * toPosition){
-	if(Knight::moveIsLegal(toPosition)){
-		;
-	}
-	else{
-		;
-	}
-}
 
 int ** Knight::legalMoves(){
 	

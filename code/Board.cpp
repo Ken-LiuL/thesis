@@ -2,6 +2,8 @@
 #include <string>
 #include <cstdlib>
 #include <iostream>
+#define FALSE 0
+#define TRUE 1
 
 Board::Board(int n,Piece ** p=NULL){
 	pieces = p;
@@ -12,19 +14,10 @@ Board::Board(int n,Piece ** p=NULL){
 void Board::display(){
 	//if pieces have not been instantiated
 	using namespace std;
-	if(pieces==NULL)
+	if(board==NULL)
 		return ;
-	int l  = 8;
+	int l = 8;
 	int i,j;
-        for(i=0;i<l;i++)
-		for(j=0;j<l;j++)
-			board[i][j] = NULL;
-	for(i=0;i<numberOfPieces;i++){
-		int * p = pieces[i]->getPosition();
-		board[p[0]][p[1]] = pieces[i]; 
-		cout << pieces[i]->getIdentifier()<< endl;
-
-	}
 	for(i=l-1;i>-1;i--){
 		for(j=0;j<l;j++){
 			string output = "";
@@ -60,8 +53,7 @@ void Board::initialize(){
 	pieces[i++] = queen1;
         King *king1 = new King('W',NULL);
 	pieces[i++] = king1;
-	Bishop * bishop2 = new Bishop('W',NULL);
-	pieces[i++] = bishop2;
+	Bishop * bishop2 = new Bishop('W',NULL); pieces[i++] = bishop2;
         Knight *knight2 = new Knight('W',NULL);
      	pieces[i++] = knight2;
 	Rook * rook2= new Rook('W',NULL);
@@ -109,13 +101,71 @@ void Board::initialize(){
 		pieces[i-32]->setPosition(l); 
 	}
 
+	//initialization of the board
+	int l  = 8;
+        for(i=0;i<l;i++)
+		for(j=0;j<l;j++)
+			board[i][j] = NULL;
+	for(i=0;i<numberOfPieces;i++){
+		int * p = pieces[i]->getPosition();
+		board[p[0]][p[1]] = pieces[i]; 
+
+	}
+}
+bool Board::moveIsLegal(int * from, int * to){
+	if(from[0]<8 && from[0]>-1 && from[1]>-1 && from[1]<8 && to[0]<8 && to[0]>-1 && to[1]<8 && to[1]>-1){
+		Piece * p = board[from[0]][from[1]];
+		
+		if(p!=NULL){
+			if(p->moveIsLegal(to))
+				p->makeMove(to);
+			else
+				return FALSE;
+		}
+		else
+			return FALSE;
+	}
+	else{
+		return FALSE;
+	}	
 
 }
 
+void Board::makeMove(int * from, int *to){
+	board[to[0]][to[1]] = board[from[0]][from[1]];
+	board[from[0]][from[1]] =  NULL;
+}
 
 int main(){
+	using namespace std;
 	Board start =  Board(32);
 	start.initialize();
 	start.display();
+	string command = "";
+	while(1){
+		getline(cin,command);
+		if(command=="abort" || command=="quit"){
+			exit(1);
+		}
+		int a,b,c,d;
+		a = command[0]-'a';
+		b = command[1]-'1';
+		c = command[2] - 'a';
+		d = command[3] - '1';
+		
+		int * from = new int[2];
+		int * to = new int[2];
+		from[0] = b;
+		from[1] = a;
+		to[0] = d;
+		to[1] = c;
+		if(start.moveIsLegal(from,to)){
+			start.makeMove(from,to);
+			start.display();
+		}
+		else
+			cout << "error movement"<< endl;
+		
+	}
 
 }

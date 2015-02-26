@@ -10,7 +10,8 @@ class Board{
 		Board(int n,Piece ** p);
 		void initialize();
 		void display();
-
+		bool moveIsLegal(int * from, int * to);
+		void makeMove(int * from,int * to);
 	protected:
 		Piece ** pieces;// list of pointers of pieces
 		int numberOfPieces;// number of pieces in the board

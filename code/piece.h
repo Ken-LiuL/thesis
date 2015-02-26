@@ -7,7 +7,7 @@ class Piece{
 		void setPosition(int * position);
 		char getColor();
 		char getIdentifier();
-	        virtual void makeMove(int * toPosition)=0;
+	        void makeMove(int * toPosition);
 	        virtual int ** legalMoves()=0;
 	        virtual bool moveIsLegal(int * toPosition)=0;
 	protected:

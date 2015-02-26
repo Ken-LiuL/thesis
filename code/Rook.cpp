@@ -11,15 +11,6 @@ bool Rook::moveIsLegal(int * toPosition){
 	return 1;	
 }
 
-void Rook::makeMove(int * toPosition){
-	if(Rook::moveIsLegal(toPosition)){
-		;
-	}
-	else{
-		;
-	}
-}
-
 int ** Rook::legalMoves(){
 	
 	return NULL;

@@ -10,6 +10,7 @@ class Board{
 		Board(int n,Piece ** p);
 		void initialize();
 		void display();
+		void doPromotion(Piece * p);
 		bool occupied(int * position);
 		void increaseSteps();
 		void capture(int * from, int * to);

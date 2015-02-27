@@ -9,6 +9,7 @@ class Pawn:public Piece{
 		bool isMoveForward(int * toPosition);
 		bool isMoveTwoSteps(int * toPosition);
 		bool isCapture(int * toPosition);
+		bool canPromote();
 	protected:
 		bool neverMoved;
 		

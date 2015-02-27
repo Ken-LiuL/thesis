@@ -10,21 +10,31 @@
 #include "Knight.h"
 #include "Rook.h"
 
+/*This class mainly relate with interaction between board display and pieceschanges under different moves*/
+
 Board::Board(int n,Piece ** p=NULL){
-	pieces = p; // list that contains pointers of pieces on the board
-	numberOfPieces = n; // number of pieces on the board
-	passant = new Board::EnPassant(); // struct { Piece * and step}
-	steps = 0;//record how many steps has been so far
+	pieces = p; /* list that contains pointers of pieces on the board */
+	numberOfPieces = n; /* number of pieces on the board */
+	passant = new Board::EnPassant(); /* struct { Piece * and step} */
+	steps = 0;/* record how many steps has been so far */
 }
 
-//currently text mode display
+/*currently text mode display */
 void Board::display(){
-	//if pieces have not been instantiated
 	using namespace std;
-	if(board==NULL)
-		return ;
-	int l = 8;
 	int i,j;
+	/*initialization of the board */
+	int l  = 8;
+        for(i=0;i<l;i++)
+		for(j=0;j<l;j++)
+			board[i][j] = NULL;
+	for(i=0;i<numberOfPieces;i++){
+		int * p = pieces[i]->getPosition();
+		board[p[0]][p[1]] = pieces[i]; 
+
+	}
+	
+	/*display*/
 	for(i=l-1;i>-1;i--){
 		for(j=0;j<l;j++){
 			string output = "";
@@ -50,20 +60,14 @@ void Board::initialize(){
 	//instantiate 32 piecess
 	pieces  = new Piece*[32];
       	int i=0;
-      	Rook * rook1 = new Rook(WHITE,NULL);
-      	pieces[i++] = rook1;
-     	Knight * knight1 = new Knight(WHITE,NULL);
-     	pieces[i++] = knight1;
-        Bishop * bishop1 = new  Bishop(WHITE,NULL);
-	pieces[i++] = bishop1;
-	Queen * queen1 = new Queen(WHITE,NULL);
-	pieces[i++] = queen1;
-        King *king1 = new King(WHITE,NULL); pieces[i++] = king1;
-	Bishop * bishop2 = new Bishop(WHITE,NULL); pieces[i++] = bishop2;
-        Knight *knight2 = new Knight(WHITE,NULL);
-     	pieces[i++] = knight2;
-	Rook * rook2= new Rook(WHITE,NULL);
-      	pieces[i++] = rook2;
+      	pieces[i++] = new Rook(WHITE,NULL);
+     	pieces[i++] = new Knight(WHITE,NULL);
+	pieces[i++] = new  Bishop(WHITE,NULL);
+	pieces[i++] = new Queen(WHITE,NULL);
+        pieces[i++] = new King(WHITE,NULL);
+	pieces[i++] = new Bishop(WHITE,NULL);
+     	pieces[i++] = new Knight(WHITE,NULL);
+      	plieces[i++] = new Rook(WHITE,NULL);
 
         int j=0;
         for(;j<16;j++){
@@ -76,24 +80,17 @@ void Board::initialize(){
 			pieces[i++] = pawn;
 			}
      	 }
-        Rook *rook3 = new Rook(BLACK,NULL);
-      	pieces[i++] = rook3;
-     	Knight * knight3 = new Knight(BLACK,NULL);
-     	pieces[i++] =knight3;
-        Bishop *bishop3 = new Bishop(BLACK,NULL);
-	pieces[i++] = bishop3;
-	Queen * queen2 = new Queen(BLACK,NULL);
-	pieces[i++] = queen2;
-        King * king2 = new King(BLACK,NULL);
-	pieces[i++] = king2;
-	Bishop * bishop4 = new Bishop(BLACK,NULL);
-	pieces[i++] = bishop4;
-        Knight * knight4 = new Knight(BLACK,NULL);
-     	pieces[i++] = knight4;
-	Rook * rook4 = new Rook(BLACK,NULL);
-      	pieces[i] = rook4;
 
-	//set the position of these piecess
+      	pieces[i++] = new Rook(BLACK,NULL);
+     	pieces[i++] =new Knight(BLACK,NULL);
+	pieces[i++] = new Bishop(BLACK,NULL);
+	pieces[i++] =  new Queen(BLACK,NULL);
+	pieces[i++] =  new King(BLACK,NULL);
+	pieces[i++] = new Bishop(BLACK,NULL);
+     	pieces[i++] = new Knight(BLACK,NULL);
+      	pieces[i] =  new Rook(BLACK,NULL);
+
+	/*set the position of these piecess */
         for(i=0;i<16;i++){
 	       	int * l =  new int[2];
 	       	l[0] = i/8;
@@ -107,19 +104,10 @@ void Board::initialize(){
 		pieces[i-32]->setPosition(l); 
 	}
 
-	//initialization of the board
-	int l  = 8;
-        for(i=0;i<l;i++)
-		for(j=0;j<l;j++)
-			board[i][j] = NULL;
-	for(i=0;i<numberOfPieces;i++){
-		int * p = pieces[i]->getPosition();
-		board[p[0]][p[1]] = pieces[i]; 
-
-	}
+	
 }
 
-//whether a sqaure is empty or occupied by a piece
+/*whether a borad sqaure is empty or occupied by a piece */
 bool Board::occupied(int * position){
 	if(board==NULL)
 		exit(-1) ;
@@ -130,17 +118,17 @@ bool Board::occupied(int * position){
 		return TRUE;
 }
 
-//if a move is legal then make a move, return true
+/* if a move is legal then make a move, return true */
 bool Board::makeMove(int * from, int * to){
 	if(from[0]<8 && from[0]>-1 && from[1]>-1 && from[1]<8 && to[0]<8 && to[0]>-1 && to[1]<8 && to[1]>-1){
 		Piece * p = board[from[0]][from[1]];
 		
 		if(p!=NULL){
 			if(p->makeMove(to,this)){
-				//if is a capture move,then list pieces and variable need to be updated
-				if(board[to[0]][to[1]]!=NULL)
+				/*if is a capture move,then list pieces and variable need to be updated */
+				if(this->getPiece(to)!=NULL)
 					this->capture(from,to);
-				//if just a move, then board need to be update
+				/*if just a move, then board need to be update*/
 				else{
 					board[to[0]][to[1]] = board[from[0]][from[1]];	
 					board[from[0]][from[1]] = NULL;
@@ -155,22 +143,25 @@ bool Board::makeMove(int * from, int * to){
 
 }
 
-//update variable board and delete target piece from list pieces and also
-//from memory of that piece
+/*update variable board and delete target piece from list pieces and also
+from memory of that piece*/
 void Board::capture(int *from,int * to){
-	Piece * p = board[to[0]][to[1]];
+	Piece * p = this->getPiece(to);
 	for(int i=0;i<numberOfPieces;i++){
 		if(pieces[i]==p){
-			//free memory,decremental variable numberOfPieces
+			/*free memory,decremental variable numberOfPieces*/
 			Piece * temp = pieces[i];
+			int * tempPosition = temp->getPosition();
 			pieces[i]=pieces[numberOfPieces-1];
 			pieces[numberOfPieces-1]=NULL;
 			numberOfPieces -= 1;
-			//update virable board
+			/*update virable board*/
 			board[to[0]][to[1]] = board[from[0]][from[1]];
-
+			
 			board[from[0]][from[1]] = NULL;
-					delete temp;
+			
+			delete tempPosition;
+			delete temp;
 			break;
 		}
 			
@@ -178,10 +169,21 @@ void Board::capture(int *from,int * to){
 
 }
 
-//set and get methods for variable
+/*set and get methods for variable*/
 Piece * Board::getPiece(int * position){
 	
 	return board[position[0]][position[1]];
+
+}
+
+/*delete the original pawn and replace it with the piece that want to be promoted to. Currently just directly promote a pawn to a queen, more clever work need be done*/
+void Board::doPromotion(Piece * p){
+	for(int i=0;i<numberOfPieces;i++){
+		if(pieces[i] == p){
+			pieces[i] = new Queen(p->getColor(),p->getPosition());
+			delete p;
+		}
+	}
 
 }
 
@@ -189,7 +191,7 @@ Board::EnPassant * Board::getPassant(){
 	return passant;
 }
 
-//since when call this function, the function increaseSteps() has not bee called so that a +1 is needed
+/*since when call this function, the function increaseSteps() has not bee called so that a +1 is needed*/
 void Board::setPassant(Piece * p){
 	passant->p = p;
 	passant->step = this->currentStep()+1;	
@@ -203,6 +205,7 @@ void Board::increaseSteps(){
 	steps += 1;
 }
 
+/*test purpose*/
 int main(){
 	using namespace std;
 	Board start =  Board(32);

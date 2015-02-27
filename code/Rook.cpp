@@ -6,7 +6,7 @@ Rook::Rook(char c,int * p)
 	:Piece::Piece('R',500,c,p)	
 	{}
 
-bool Rook::moveIsLegal(int * toPosition){
+bool Rook::makeMove(int * toPosition,Board * b){
 
 	return 1;	
 }

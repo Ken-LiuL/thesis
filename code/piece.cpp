@@ -17,7 +17,12 @@ char Piece::getColor(){
 }
 
 void Piece::setPosition(int * p){
-	position = p;
+	if(position!=NULL){
+		position[0] = p[0];
+		position[1] = p[1];
+	}
+	else
+		position = p;
 }
 int *Piece::getPosition(){
 	return position;
@@ -26,6 +31,4 @@ char Piece::getIdentifier(){
 	return identifier;
 }
 
-void Piece::makeMove(int * toPosition){
-	position = toPosition;
-}
+

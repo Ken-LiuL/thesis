@@ -5,7 +5,7 @@ Queen::Queen(char c,int * p)
 	:Piece::Piece('Q',900,c,p)	
 	{}
 
-bool Queen::moveIsLegal(int * toPosition){
+bool Queen::makeMove(int * toPosition,Board * b){
 
 	return 1;	
 }

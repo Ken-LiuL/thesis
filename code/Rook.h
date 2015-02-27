@@ -1,7 +1,9 @@
+#pragma once
 #include "piece.h"
+class Board;
 class Rook:public Piece{
  	public:
 		Rook(char color, int * position);
-	        bool moveIsLegal(int * toPosition);
+	        bool makeMove(int * toPosition,Board * b);
 	        int ** legalMoves();
 };

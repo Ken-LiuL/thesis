@@ -5,7 +5,7 @@ Knight::Knight(char c,int * p)
 	:Piece::Piece('N',300,c,p)	
 	{}
 
-bool Knight::moveIsLegal(int * toPosition){
+bool Knight::makeMove(int * toPosition,Board * b){
 
 	return 1;	
 }

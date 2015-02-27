@@ -1,4 +1,5 @@
 #pragma once
+class Board;
 class Piece{
 	public:
 		Piece(char identifier,int value,char color,int * position);
@@ -7,9 +8,8 @@ class Piece{
 		void setPosition(int * position);
 		char getColor();
 		char getIdentifier();
-	        void makeMove(int * toPosition);
+	        virtual bool makeMove(int * toPosition,Board * board)=0;
 	        virtual int ** legalMoves()=0;
-	        virtual bool moveIsLegal(int * toPosition)=0;
 	protected:
 		int value;
 		char color;

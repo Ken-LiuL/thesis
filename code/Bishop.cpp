@@ -5,7 +5,7 @@ Bishop::Bishop(char c,int * p)
 	:Piece::Piece('B',300,c,p)	
 	{}
 
-bool Bishop::moveIsLegal(int * toPosition){
+bool Bishop::makeMove(int * toPosition,Board * b){
 
 	return 1;	
 }

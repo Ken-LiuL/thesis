@@ -1,19 +1,20 @@
 #include "Knight.h"
 #include <iostream>
+using namespace std;
 
 Knight::Knight(char c,int * p)
 	:Piece::Piece('N',300,c,p)	
 	{}
 
-bool Knight::makeMove(int * toPosition,Board * b){
+bool Knight::makeMove(const int * toPosition, Board &b){
 
 	return 1;	
 }
 
 
-int ** Knight::legalMoves(){
+vector<int*> Knight::legalMoves(const Board &board){
 	
-	return NULL;
+	return vector<int*>();
 
 }
 

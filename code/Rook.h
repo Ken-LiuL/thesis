@@ -1,9 +1,10 @@
 #pragma once
 #include "piece.h"
+#include <vector>
 class Board;
 class Rook:public Piece{
  	public:
 		Rook(char color, int * position);
-	        bool makeMove(int * toPosition,Board * b);
-	        int ** legalMoves();
+	        bool makeMove(const int * toPosition,Board &b);
+	        std::vector<int*> legalMoves(const Board &b);
 };

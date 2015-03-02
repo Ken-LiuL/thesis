@@ -4,11 +4,11 @@ class Board;
 class Pawn:public Piece{
  	public:
 		Pawn(char color, int * position);
-	        bool makeMove(int * toPosition,Board * board);
-	        int ** legalMoves();
-		bool isMoveForward(int * toPosition);
-		bool isMoveTwoSteps(int * toPosition);
-		bool isCapture(int * toPosition);
+	        bool makeMove(const int * toPosition, Board &board);
+	        std::vector<int*> legalMoves(const Board &b);
+		bool isMoveForward(const int * toPosition);
+		bool isMoveTwoSteps(const int * toPosition);
+		bool isCapture(const int * toPosition);
 		bool canPromote();
 	protected:
 		bool neverMoved;

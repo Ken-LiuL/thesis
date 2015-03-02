@@ -1,18 +1,19 @@
 #include "Bishop.h"
 #include <iostream>
+using namespace std;
 
 Bishop::Bishop(char c,int * p)
 	:Piece::Piece('B',300,c,p)	
 	{}
 
-bool Bishop::makeMove(int * toPosition,Board * b){
+bool Bishop::makeMove(const int * toPosition,Board &b){
 
 	return 1;	
 }
 
-int ** Bishop::legalMoves(){
+vector<int*> Bishop::legalMoves(const Board &board){
 	
-	return NULL;
+	return vector<int*>();
 
 }
 

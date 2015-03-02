@@ -16,13 +16,18 @@ char Piece::getColor(){
 	return color;
 }
 
-void Piece::setPosition(int * p){
+void Piece::setPosition(const int * p){
 	if(position!=NULL){
 		position[0] = p[0];
 		position[1] = p[1];
 	}
-	else
-		position = p;
+	else{
+		
+		position = new int[2];
+		position[0] = p[0];
+		position[1] =  p[1];
+		delete[] p;
+	    }
 }
 int *Piece::getPosition(){
 	return position;

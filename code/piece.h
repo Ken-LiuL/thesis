@@ -1,15 +1,16 @@
 #pragma once
+#include <vector>
 class Board;
 class Piece{
 	public:
 		Piece(char identifier,int value,char color,int * position);
 		int *getPosition();
 		int getValue();
-		void setPosition(int * position);
+		void setPosition(const int * position);
 		char getColor();
 		char getIdentifier();
-	        virtual bool makeMove(int * toPosition,Board * board)=0;
-	        virtual int ** legalMoves()=0;
+	        virtual bool makeMove(const int * toPosition, Board  &board)=0;
+	        virtual std::vector<int*> legalMoves(const Board &b)=0;
 	protected:
 		int value;
 		char color;

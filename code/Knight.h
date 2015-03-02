@@ -7,4 +7,6 @@ class Knight:public Piece{
 		Knight(char color, int * position);
 	        bool makeMove(const int * toPosition,Board &b);
 	        std::vector<int*> legalMoves(const Board &b);
+	private:
+		bool reachablePosition(const int * p,const Board &b);
 };

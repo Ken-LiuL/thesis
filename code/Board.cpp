@@ -22,6 +22,13 @@ Board::Board(int n,vector<Piece *>   p){
 	steps = 0;/* record how many steps has been so far */
 }
 
+/*destructor , free memory of piece and passant*/
+Board::~Board(){
+	for(vector<Piece*>::iterator it=pieces.begin();it<pieces.end();it++)
+	{
+		
+	}
+}
 /*currently text mode display */
 void Board::display(){
 	using namespace std;
@@ -147,7 +154,6 @@ void Board::capture(int *from,int * to){
 		if(pieces.at(i)==p){
 			/*free memory,decremental variable numberOfPieces*/
 			Piece * temp = pieces.at(i);
-			int * tempPosition = temp->getPosition();
 			pieces.erase(pieces.begin()+i);
 			numberOfPieces -= 1;
 			/*update virable board*/
@@ -155,7 +161,6 @@ void Board::capture(int *from,int * to){
 			
 			board[from[0]][from[1]] = NULL;
 			
-			delete tempPosition;
 			delete temp;
 			break;
 		}
@@ -163,6 +168,7 @@ void Board::capture(int *from,int * to){
 	}
 
 }
+
 
 /*set and get methods for variable*/
 Piece * Board::getPiece(const int * position) const{
@@ -175,7 +181,10 @@ Piece * Board::getPiece(const int * position) const{
 void Board::doPromotion(Piece * p){
 	for(int i=0;i<numberOfPieces;i++){
 		if(pieces.at(i)== p){
-			pieces.at(i)= new Queen(p->getColor(),p->getPosition());
+			int * cord = new int[2];
+			cord[0] = p->getPosition()[0];
+			cord[1] = p->getPosition()[1];
+			pieces.at(i)= new Queen(p->getColor(),cord);
 			delete p;
 		}
 	}

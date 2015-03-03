@@ -9,6 +9,7 @@ class Board{
 		};  
 	
 		Board(int n,std::vector<Piece *>  p);
+		~Board();
 		void initialize();
 		void display();
 		void doPromotion(Piece * p);

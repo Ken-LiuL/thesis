@@ -7,7 +7,11 @@ Piece::Piece(char i,int v,char c,int * p){
         position = p;
 	identifier = i;
 }
-
+Piece::~Piece(){
+	delete[] position;
+	std::cout << "success" << std::endl;
+}
+ 
 int Piece::getValue(){
 	return value;
 }

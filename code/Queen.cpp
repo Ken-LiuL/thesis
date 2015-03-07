@@ -8,6 +8,12 @@ Queen::Queen(char c,int * p)
 	:Piece::Piece('Q',900,c,p)	
 	{}
 
+Piece *Queen::copy(){
+	int * cord = new int[2];
+	cord[0] = this->position[0];
+	cord[1] = this->position[1];
+	return new Queen(this->color,cord);
+}
 bool Queen::makeMove(const int * toPosition,Board  &b){
 	/*every move of queen is legal, so just to update its position
 	so we just need to check whether target position has not been 

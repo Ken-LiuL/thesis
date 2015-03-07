@@ -9,6 +9,12 @@ King::King(char c,int * p)
 	:Piece::Piece('K',2000,c,p)	
 	{}
 
+Piece *King::copy(){
+	int * cord = new int[2];
+	cord[0] = this->position[0];
+	cord[1] = this->position[1];
+	return new King(this->color,cord);
+}
 bool King::makeMove(const int * toPosition,Board &b){
 	vector<int*> moves = this->legalMoves(b);
 	bool isLegal = FALSE;

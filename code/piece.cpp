@@ -7,16 +7,17 @@ Piece::Piece(char i,int v,char c,int * p){
         position = p;
 	identifier = i;
 }
+
+
 Piece::~Piece(){
 	delete[] position;
-	std::cout << "success" << std::endl;
 }
  
-int Piece::getValue(){
+int Piece::getValue() const{
 	return value;
 }
 
-char Piece::getColor(){
+char Piece::getColor() const{
 	return color;
 }
 
@@ -33,10 +34,10 @@ void Piece::setPosition(const int * p){
 		delete[] p;
 	    }
 }
-int *Piece::getPosition(){
+int *Piece::getPosition() const{
 	return position;
 }
-char Piece::getIdentifier(){
+char Piece::getIdentifier() const{
 	return identifier;
 }
 

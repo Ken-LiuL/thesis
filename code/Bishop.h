@@ -6,5 +6,6 @@ class Bishop:public Piece{
  	public:
 		Bishop(char color, int * position);
 	        bool makeMove(const int * toPosition,Board &b);
+		Piece *copy();
 	        std::vector<int*> legalMoves(const Board &b);
 };

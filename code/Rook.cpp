@@ -8,6 +8,12 @@ Rook::Rook(char c,int * p)
 	:Piece::Piece('R',500,c,p)	
 	{}
 
+Piece *Rook::copy(){
+	int *cord = new int[2];
+	cord[0] = this->position[0];
+	cord[1] = this->position[1];
+	return new Rook(this->color,cord);
+}
 bool Rook::makeMove(const int * toPosition, Board &b){
 	/*check whether toPosition is in legalMoves, and free memory in moveVector*/
 	vector<int*>  moveVector = this->legalMoves(b);

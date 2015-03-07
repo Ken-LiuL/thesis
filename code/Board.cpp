@@ -11,13 +11,13 @@
 #include "Pawn.h"
 #include "Knight.h"
 #include "Rook.h"
+#include "HumanPlayer.h"
 using namespace std;
 
 /*This class mainly relate with interaction between board display and pieceschanges under different moves*/
 
-Board::Board(int n,vector<Piece *>   p){
+Board::Board(int n,vector<Piece *> p){
 	pieces = p; /* list that contains pointers of pieces on the board */
-	numberOfPieces = n; /* number of pieces on the board */
 	passant = new Board::EnPassant(); /* struct { Piece * and step} */
 	steps = 0;/* record how many steps has been so far */
 }
@@ -26,7 +26,30 @@ Board::Board(int n,vector<Piece *>   p){
 Board::~Board(){
 	for(vector<Piece*>::iterator it=pieces.begin();it<pieces.end();it++)
 	{
+		delete (*it);
+	}
+}
+
+Board::Board(Board &b){
+	steps = b.currentStep();
+        vector<Piece*> &piecesB = b.getPieces();
+	pieces = vector<Piece*>(0);
+	for(vector<Piece*>::iterator it=piecesB.begin();it<piecesB.end();it++){
+	
+		pieces.push_back((*it)->copy());
 		
+	}
+}
+void Board::freshBoard(){
+	int i,j;
+	int l  = 8;
+        for(i=0;i<l;i++)
+		for(j=0;j<l;j++)
+			board[i][j] = NULL;
+	for(i=0;i<pieces.size();i++){
+		int * p = pieces.at(i)->getPosition();
+		board[p[0]][p[1]] = pieces.at(i); 
+
 	}
 }
 /*currently text mode display */
@@ -35,16 +58,8 @@ void Board::display(){
 	int i,j;
 	/*initialization of the board */
 	int l  = 8;
-        for(i=0;i<l;i++)
-		for(j=0;j<l;j++)
-			board[i][j] = NULL;
-	for(i=0;i<numberOfPieces;i++){
-		int * p = pieces.at(i)->getPosition();
-		board[p[0]][p[1]] = pieces.at(i); 
-
-	}
-	
-	/*display*/
+	this->freshBoard();
+        /*display*/
 	for(i=l-1;i>-1;i--){
 		for(j=0;j<l;j++){
 			string output = "";
@@ -131,11 +146,7 @@ bool Board::makeMove(int * from, int * to){
 				/*if is a capture move,then list pieces and variable need to be updated */
 				if(this->getPiece(to)!=NULL)
 					this->capture(from,to);
-				/*if just a move, then board need to be update*/
-				else{
-					board[to[0]][to[1]] = board[from[0]][from[1]];	
-					board[from[0]][from[1]] = NULL;
-				}
+				
 				this->increaseSteps();
 
 				return TRUE;
@@ -150,17 +161,11 @@ bool Board::makeMove(int * from, int * to){
 from memory of that piece*/
 void Board::capture(int *from,int * to){
 	Piece * p = this->getPiece(to);
-	for(int i=0;i<numberOfPieces;i++){
+	for(int i=0;i<pieces.size();i++){
 		if(pieces.at(i)==p){
 			/*free memory,decremental variable numberOfPieces*/
 			Piece * temp = pieces.at(i);
 			pieces.erase(pieces.begin()+i);
-			numberOfPieces -= 1;
-			/*update virable board*/
-			board[to[0]][to[1]] = board[from[0]][from[1]];
-			
-			board[from[0]][from[1]] = NULL;
-			
 			delete temp;
 			break;
 		}
@@ -177,9 +182,12 @@ Piece * Board::getPiece(const int * position) const{
 
 }
 
+vector<Piece*> & Board::getPieces() {
+	return pieces;
+}
 /*delete the original pawn and replace it with the piece that want to be promoted to. Currently just directly promote a pawn to a queen, more clever work need be done*/
 void Board::doPromotion(Piece * p){
-	for(int i=0;i<numberOfPieces;i++){
+	for(int i=0;i<pieces.size();i++){
 		if(pieces.at(i)== p){
 			int * cord = new int[2];
 			cord[0] = p->getPosition()[0];
@@ -194,6 +202,7 @@ void Board::doPromotion(Piece * p){
 Board::EnPassant * Board::getPassant() const{
 	return passant;
 }
+
 
 /*since when call this function, the function increaseSteps() has not bee called so that a +1 is needed*/
 void Board::setPassant(Piece * p){
@@ -211,34 +220,13 @@ void Board::increaseSteps(){
 
 /*test purpose*/
 int main(){
-	Board start =  Board(32,vector<Piece*>(0));
+	Board start(32,vector<Piece*>(0));
 	start.initialize();
 	start.display();
-	string command = "";
+	HumanPlayer human(WHITE);
 	while(1){
-		getline(cin,command);
-		if(command=="abort" || command=="quit"){
-			exit(1);
-		}
-		int a,b,c,d;
-		a = command[0]-'a';
-		b = command[1]-'1';
-		c = command[2] - 'a';
-		d = command[3] - '1';
 		
-		int * from = new int[2];
-		int * to = new int[2];
-		from[0] = b;
-		from[1] = a;
-		to[0] = d;
-		to[1] = c;
-		if(start.makeMove(from,to)){
-			start.display();
+		human.humanPlay(start);
 		}
-		else
-			cout << "error movement"<< endl;
-		delete[] from;
-		delete[] to;
-	}
 
 }

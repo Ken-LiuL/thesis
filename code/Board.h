@@ -9,13 +9,16 @@ class Board{
 		};  
 	
 		Board(int n,std::vector<Piece *>  p);
+		Board(Board &b);
 		~Board();
 		void initialize();
+		void freshBoard();
 		void display();
 		void doPromotion(Piece * p);
 		bool occupied(const int * position) const;
 		void increaseSteps();
 		void capture(int * from, int * to);
+	        std::vector<Piece*> &getPieces();
 		Piece * getPiece(const int * toPosition) const;
 		EnPassant * getPassant() const;
 		int currentStep() const;

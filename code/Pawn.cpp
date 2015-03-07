@@ -12,6 +12,16 @@ Pawn::Pawn(char c,int * p):Piece::Piece('P',100,c,p){
 }
 
 
+Piece *Pawn::copy(){
+	int *p = new int [2];
+	p[0] = this->position[0];
+	p[1] = this->position[1];
+	return new Pawn(this->color,p);
+}
+
+bool Pawn::isNeverMoved() const{
+	return neverMoved;
+}
 /*first test whether movement is legal, if it is legal , variable neverMoved needs to be set False,  then update the position and return true.And also if it is en passant , function Board::capture need be called to remove opponent's pawn. Furthermore, if it move forward two steps, function Board::setPassant is called to record that en passant is possible in next step.*/
 bool Pawn::makeMove(const int * toPosition,Board &board){
 	vector<int*> moves =  this->legalMoves(board);

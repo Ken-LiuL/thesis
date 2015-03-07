@@ -6,5 +6,6 @@ class King:public Piece{
  	public:
 		King( char color, int * position);
 	        bool makeMove(const int * toPosition,Board &b);
+		Piece *copy();
 	        std::vector<int*> legalMoves(const Board &b);
 };

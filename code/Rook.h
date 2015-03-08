@@ -8,4 +8,7 @@ class Rook:public Piece{
 	        bool makeMove(const int * toPosition,Board &b);
 		Piece *copy();
 	        std::vector<int*> legalMoves(const Board &b);
+		bool isNeverMoved();
+	protected:	
+		bool neverMoved;
 };

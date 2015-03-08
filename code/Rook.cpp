@@ -6,13 +6,19 @@ using namespace std;
 
 Rook::Rook(char c,int * p)
 	:Piece::Piece('R',500,c,p)	
-	{}
+	{
+	neverMoved = TRUE;
+}
 
 Piece *Rook::copy(){
 	int *cord = new int[2];
 	cord[0] = this->position[0];
 	cord[1] = this->position[1];
 	return new Rook(this->color,cord);
+}
+
+bool Rook::isNeverMoved(){
+	return neverMoved;
 }
 bool Rook::makeMove(const int * toPosition, Board &b){
 	/*check whether toPosition is in legalMoves, and free memory in moveVector*/
@@ -22,6 +28,7 @@ bool Rook::makeMove(const int * toPosition, Board &b){
 		if(toPosition[0]==(*it)[0] && toPosition[1]==(*it)[1]){
 			isLegal = TRUE;
 			this->setPosition(toPosition);
+			neverMoved = FALSE;
 		}
 		delete[] *it;
 	}

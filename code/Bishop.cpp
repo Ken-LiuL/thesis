@@ -1,4 +1,6 @@
 #include "Bishop.h"
+#include "Constants.h"
+#include "Board.h"
 #include <iostream>
 using namespace std;
 
@@ -26,7 +28,7 @@ bool Bishop::makeMove(const int * toPosition,Board &b){
 
 }
 
-vector<int*> Bishop::legalMoves(const Board &board){
+vector<int*> Bishop::legalMoves(const Board &b){
 	vector<int*> moves  = vector<int*>();
 	int i,j;
 	//northwest

@@ -1,4 +1,5 @@
 #include "HumanPlayer.h"
+#include "King.h"
 #include "Board.h"
 #include "piece.h"
 #include "Constants.h"
@@ -38,28 +39,45 @@ void HumanPlayer::humanPlay(Board &board){
 	}
 	else{
 		Board boardBackup = board;
-		if(boardBackup.makeMove(from,to) && ! this->beCheckmated(boardBackup)){ 	
+		if(boardBackup.makeMove(from,to) && !beCheckmated(boardBackup)){ 	
 			board.makeMove(from,to);
 		}		
 		else
-			cout << "error movement"<< endl;
+			exit(-1);
 	}
 	delete[] from;
 	delete[] to;
 
 }
 
-bool HumanPlayer::beCheckedmated(Board &board){
+bool HumanPlayer::beCheckmated(Board &board){
 	vector<Piece*> pieces = board.getPieces();
-	vector<int*> opponentAttack = vector<int*>();
+	vector<int*> opponentAttack;
 	int i,j;
 	int * positionOfKing ; 
+	bool  checkMated = FALSE;
 	for(i=0;i<pieces.size();i++){
-		if(pieces.at(i)->getColor()==this->color && pieces.at(i)->getIdentifier() == KING)
+		if(pieces.at(i)->getColor()==this->color && pieces.at(i)->getIdentifier() == KING){
 			positionOfKing = pieces.at(i)->getPosition();
-		else if(pieces.at(i)->getColor()!=this->color()){
+			break;
+			}
 			
-
-		}
 	}
+	for(i=0;i<pieces.size();i++){
+		if(checkMated)
+			break;
+		if(pieces.at(i)->getColor()!=this->color){
+			if(pieces.at(i)->getIdentifier()==KING)
+				opponentAttack =((King*)pieces.at(i))->legalMovesWithoutCastling(board);
+			else
+				opponentAttack = pieces.at(i)->legalMoves(board);
+			for(j=0;j<opponentAttack.size();j++){
+				if(opponentAttack.at(j)[0]==positionOfKing[0]&&opponentAttack.at(j)[1]==positionOfKing[1])
+					checkMated=TRUE;
+				delete[] opponentAttack.at(j);
+			}
+		}
+		
+	}
+	return checkMated;
 }

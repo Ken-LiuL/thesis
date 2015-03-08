@@ -28,6 +28,7 @@ Board::~Board(){
 	{
 		delete (*it);
 	}
+	delete passant;
 }
 
 Board::Board(Board &b){
@@ -35,9 +36,14 @@ Board::Board(Board &b){
         vector<Piece*> &piecesB = b.getPieces();
 	pieces = vector<Piece*>(0);
 	for(vector<Piece*>::iterator it=piecesB.begin();it<piecesB.end();it++){
-	
 		pieces.push_back((*it)->copy());
 		
+	}
+	this->freshBoard();
+	passant = new Board::EnPassant();
+	if(b.getPassant()->p!=NULL && b.getPassant()->step==steps){
+		passant->p = this->getPiece(b.getPassant()->p->getPosition());
+		passant->step = b.getPassant()->step;
 	}
 }
 void Board::freshBoard(){
@@ -225,8 +231,8 @@ int main(){
 	start.display();
 	HumanPlayer human(WHITE);
 	while(1){
-		
 		human.humanPlay(start);
+		start.display();
 		}
 
 }

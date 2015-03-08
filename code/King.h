@@ -8,4 +8,7 @@ class King:public Piece{
 	        bool makeMove(const int * toPosition,Board &b);
 		Piece *copy();
 	        std::vector<int*> legalMoves(const Board &b);
+		std::vector<int*> legalMovesWithoutCastling(const Board &b);
+	protected:
+		bool neverMoved;
 };

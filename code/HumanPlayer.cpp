@@ -53,8 +53,8 @@ void HumanPlayer::humanPlay(Board &board){
 bool HumanPlayer::beCheckmated(Board &board){
 	vector<Piece*> pieces = board.getPieces();
 	vector<int*> opponentAttack;
-	int i,j;
-	int * positionOfKing ; 
+	int i;
+	int * positionOfKing; 
 	bool  checkMated = FALSE;
 	for(i=0;i<pieces.size();i++){
 		if(pieces.at(i)->getColor()==this->color && pieces.at(i)->getIdentifier() == KING){
@@ -63,21 +63,5 @@ bool HumanPlayer::beCheckmated(Board &board){
 			}
 			
 	}
-	for(i=0;i<pieces.size();i++){
-		if(checkMated)
-			break;
-		if(pieces.at(i)->getColor()!=this->color){
-			if(pieces.at(i)->getIdentifier()==KING)
-				opponentAttack =((King*)pieces.at(i))->legalMovesWithoutCastling(board);
-			else
-				opponentAttack = pieces.at(i)->legalMoves(board);
-			for(j=0;j<opponentAttack.size();j++){
-				if(opponentAttack.at(j)[0]==positionOfKing[0]&&opponentAttack.at(j)[1]==positionOfKing[1])
-					checkMated=TRUE;
-				delete[] opponentAttack.at(j);
-			}
-		}
-		
-	}
-	return checkMated;
+	return board.isUnderAttack(positionOfKing,this->color);
 }

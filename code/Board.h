@@ -18,6 +18,7 @@ class Board{
 		bool occupied(const int * position) const;
 		void increaseSteps();
 		void capture(int * from, int * to);
+		bool isUnderAttack(int * cord,char color) const;
 	        std::vector<Piece*> &getPieces();
 		Piece * getPiece(const int * toPosition) const;
 		EnPassant * getPassant() const;

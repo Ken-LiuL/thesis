@@ -181,6 +181,28 @@ void Board::capture(int *from,int * to){
 }
 
 
+/*check whether a positi:on is under attack*/
+bool Board::isUnderAttack(int *cord,char color) const{
+	bool isUnderAttack = FALSE;
+	for(int i=0;i<pieces.size();i++){
+		if(isUnderAttack)
+			break;
+		Piece* opponent=pieces.at(i);
+		if(opponent->getColor()!=color){
+			vector<int*> moves;
+			if(opponent->getIdentifier()==KING)
+				moves = ((King*)opponent)->legalMovesWithoutCastling(*this);
+			else
+				moves = opponent->legalMoves(*this);
+			for(int j=0;j<moves.size();j++){
+				if(moves.at(j)[0]==cord[0]&&moves.at(j)[1]==cord[1])
+					isUnderAttack = TRUE;
+				delete[] moves.at(j);	
+			}
+		}
+	}
+	return isUnderAttack;
+}
 /*set and get methods for variable*/
 Piece * Board::getPiece(const int * position) const{
 	

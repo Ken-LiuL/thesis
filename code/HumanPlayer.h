@@ -1,13 +1,9 @@
 #pragma once
+#include "Player.h"
 class Board;
-class HumanPlayer{
-	private:
-		char color;
-		bool checkmated;
-		
+class HumanPlayer:public Player{
 	public:
 		HumanPlayer(char c);
-		void humanPlay(Board &board);
-		bool beCheckmated(Board &board);
+		void play(Board &board);
 
 };

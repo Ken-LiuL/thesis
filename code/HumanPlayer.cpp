@@ -8,12 +8,10 @@
 #include <cstdlib>
 using namespace std;
 
-HumanPlayer::HumanPlayer(char c){
-	color = c;
-	checkmated = FALSE;
+HumanPlayer::HumanPlayer(char c):Player::Player(c){
 }
 
-void HumanPlayer::humanPlay(Board &board){	
+void HumanPlayer::play(Board &board){	
 	/*parse command from human*/
 	string command;
 	getline(cin,command);
@@ -32,36 +30,15 @@ void HumanPlayer::humanPlay(Board &board){
 	from[1] = a;
 	to[0] = d;
 	to[1] = c;
-	/*check whether currently human is under checkmate*/
-	if(this->checkmated){
-		;	
 	
-	}
-	else{
-		Board boardBackup = board;
-		if(boardBackup.makeMove(from,to) && !beCheckmated(boardBackup)){ 	
-			board.makeMove(from,to);
-		}		
-		else
-			exit(-1);
-	}
+	Board boardBackup = board;
+	if((board.getPiece(from)->getColor()==this->getColor()) && boardBackup.makeMove(from,to) && !amICheckmated(boardBackup))
+		board.makeMove(from,to);
+	else
+		cout << "error message " << endl;
 	delete[] from;
 	delete[] to;
 
 }
 
-bool HumanPlayer::beCheckmated(Board &board){
-	vector<Piece*> pieces = board.getPieces();
-	vector<int*> opponentAttack;
-	int i;
-	int * positionOfKing; 
-	bool  checkMated = FALSE;
-	for(i=0;i<pieces.size();i++){
-		if(pieces.at(i)->getColor()==this->color && pieces.at(i)->getIdentifier() == KING){
-			positionOfKing = pieces.at(i)->getPosition();
-			break;
-			}
-			
-	}
-	return board.isUnderAttack(positionOfKing,this->color);
-}
+

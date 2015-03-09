@@ -30,13 +30,13 @@ bool King::makeMove(const int * toPosition,Board &board){
 					int rookCord[] = {toPosition[0],0};
 					Piece* rook = board.getPiece(rookCord);
 					int rookTarget[] = {toPosition[0],3};
-					//rook->setPosition(rookTarget);
+					rook->setPosition(rookTarget);
 				}
 				else{
 					int rookCord[] = {toPosition[0],7};
 					Piece* rook = board.getPiece(rookCord);
 					int rookTarget[] = {toPosition[0],5};	
-					//rook->setPosition(rookTarget);
+					rook->setPosition(rookTarget);
 				}	
 			}
 			this->setPosition(toPosition);	

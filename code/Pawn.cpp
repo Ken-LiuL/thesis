@@ -25,6 +25,8 @@ bool Pawn::isNeverMoved() const{
 /*first test whether movement is legal, if it is legal , variable neverMoved needs to be set False,  then update the position and return true.And also if it is en passant , function Board::capture need be called to remove opponent's pawn. Furthermore, if it move forward two steps, function Board::setPassant is called to record that en passant is possible in next step.*/
 bool Pawn::makeMove(const int * toPosition,Board &board){
 	vector<int*> moves =  this->legalMoves(board);
+		cout << "??" << endl;
+	
 	int * currentPosition = this->position;
 	bool isLegal  = FALSE;
 	for(vector<int*>::iterator it=moves.begin();it<moves.end();it++){

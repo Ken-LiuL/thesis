@@ -28,7 +28,7 @@ void ComputerPlayer::play(Board &board){
 		j = rand() % pieces.size();/*generate random piece*/
 		if(findMove)
 			break;
-		vector<int*> moves =  (pieces.at(j))->legalMoves(board);
+		vector<Coordinate> moves =  (pieces.at(j))->legalMoves(board);
 		while(!moves.empty()){
 			Board boardBackup =  board;
 			i = rand() % moves.size();/*generate random move*/
@@ -39,11 +39,7 @@ void ComputerPlayer::play(Board &board){
 				findMove = TRUE;
 				break;
 			}
-			delete[] moves.at(i);
 			moves.erase(moves.begin()+i);
-		}
-		for(int i=0;i<moves.size();i++){
-			delete[] moves.at(i);
 		}
 		pieces.erase(pieces.begin()+j);
 	}  

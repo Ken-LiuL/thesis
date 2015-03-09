@@ -4,38 +4,33 @@
 #include <iostream>
 using namespace std;
 
-Bishop::Bishop(char c,int * p)
+Bishop::Bishop(char c,Coordinate p)
 	:Piece::Piece('B',300,c,p)	
 	{}
 
 Piece *Bishop::copy(){
-	int *cord = new int[2];
-	cord[0] = this->position[0];
-	cord[1] = this->position[1];
-	return new Bishop(this->color,cord);
+	return new Bishop(this->color,position);
 }
-bool Bishop::makeMove(const int * toPosition,Board &b){
-	vector<int*>  moveVector = this->legalMoves(b);
+bool Bishop::makeMove(Coordinate toPosition,Board &b){
+	vector<Coordinate>  moveVector = this->legalMoves(b);
 	bool isLegal =  FALSE;
-	for(vector<int*>::iterator it=moveVector.begin();it<moveVector.end();it++){
-		if(toPosition[0]==(*it)[0] && toPosition[1]==(*it)[1]){
+	for(vector<Coordinate>::iterator it=moveVector.begin();it<moveVector.end();it++){
+		if((*it)==toPosition){
 			isLegal = TRUE;
 			this->setPosition(toPosition);
+			break;
 		}
-		delete[] *it;
 	}
 	return isLegal;
 
 }
 
-vector<int*> Bishop::legalMoves(const Board &b){
-	vector<int*> moves  = vector<int*>();
+vector<Coordinate> Bishop::legalMoves(const Board &b){
+	vector<Coordinate> moves(0);
 	int i,j;
 	//northwest
 	for(i=position[0],j=position[1];i<7 && j>0;i++,j--){
-		int * p = new int[2];
-		p[0] = i+1;
-		p[1] = j-1;
+		Coordinate p(i+1,j-1);
 		if(!b.occupied(p)){
 			moves.push_back(p);
 		}
@@ -44,16 +39,13 @@ vector<int*> Bishop::legalMoves(const Board &b){
 			break;
 		}
 		else{
-			delete[] p;
 			break;
 		}
 
 	}
 	//northeast
 	for(i=position[0],j=position[1];i<7 && j<7;i++,j++){
-		int * p = new int[2];
-		p[0] = i+1;
-		p[1] = j+1;
+		Coordinate p(i+1,j+1);
 		if(!b.occupied(p)){
 			moves.push_back(p);
 		}
@@ -62,16 +54,13 @@ vector<int*> Bishop::legalMoves(const Board &b){
 			break;
 		}
 		else{
-			delete[] p;
 			break;
 		}
 
 	}
 	//southwest
 	for(i=position[0],j=position[1];i>0 && j>0;i--,j--){
-		int * p = new int[2];
-		p[0] = i-1;
-		p[1] = j-1;
+		Coordinate p(i-1,j-1);
 		if(!b.occupied(p)){
 			moves.push_back(p);
 		}
@@ -80,16 +69,13 @@ vector<int*> Bishop::legalMoves(const Board &b){
 			break;
 		}
 		else{
-			delete[] p;
 			break;
 		}
 
 	}
 	//southeast
 	for(i=position[0],j=position[1];i>0 && j<7;i--,j++){
-		int * p = new int[2];
-		p[0] = i-1;
-		p[1] = j+1;
+		Coordinate p(i-1,j+1);
 		if(!b.occupied(p)){
 			moves.push_back(p);
 		}
@@ -98,14 +84,13 @@ vector<int*> Bishop::legalMoves(const Board &b){
 			break;
 		}
 		else{
-			delete[] p;
 			break;
 		}
 
 	}
 
 	return moves;
-
 }
+
 
 

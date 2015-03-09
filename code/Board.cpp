@@ -74,7 +74,7 @@ void Board::freshBoard(){
 			board[i][j] = NULL;
 	
 	for(i=0;i<pieces.size();i++){
-		int * p = pieces.at(i)->getPosition();
+		Coordinate p = pieces.at(i)->getPosition();
 		board[p[0]][p[1]] = pieces.at(i); 
 
 	}
@@ -111,42 +111,36 @@ void Board::initialize(){
 	//instantiate 32 piecess
       	int i=0,j=0;
 	
-      	pieces.push_back(new Rook(WHITE,NULL));
-     	pieces.push_back(new Knight(WHITE,NULL));
-	pieces.push_back(new  Bishop(WHITE,NULL));
-	pieces.push_back(new Queen(WHITE,NULL));
-        pieces.push_back(new King(WHITE,NULL));
-	pieces.push_back(new Bishop(WHITE,NULL));
-     	pieces.push_back(new Knight(WHITE,NULL));
-      	pieces.push_back(new Rook(WHITE,NULL));
+      	pieces.push_back(new Rook(WHITE,Coordinate()));
+     	pieces.push_back(new Knight(WHITE,Coordinate()));
+	pieces.push_back(new  Bishop(WHITE,Coordinate()));
+	pieces.push_back(new Queen(WHITE,Coordinate()));
+        pieces.push_back(new King(WHITE,Coordinate()));
+	pieces.push_back(new Bishop(WHITE,Coordinate()));
+     	pieces.push_back(new Knight(WHITE,Coordinate()));
+      	pieces.push_back(new Rook(WHITE,Coordinate()));
         for(;j<16;j++){
 		if(j<8)
-			pieces.push_back(new Pawn(WHITE,NULL));
+			pieces.push_back(new Pawn(WHITE,Coordinate()));
 		else
-			pieces.push_back(new Pawn(BLACK,NULL));
+			pieces.push_back(new Pawn(BLACK,Coordinate()));
      	 }
 	
-      	pieces.push_back(new Rook(BLACK,NULL));
-     	pieces.push_back(new Knight(BLACK,NULL));
-	pieces.push_back(new Bishop(BLACK,NULL));
-	pieces.push_back(new Queen(BLACK,NULL));
-	pieces.push_back(new King(BLACK,NULL));
-	pieces.push_back(new Bishop(BLACK,NULL));
-     	pieces.push_back(new Knight(BLACK,NULL));
-      	pieces.push_back(new Rook(BLACK,NULL));
+      	pieces.push_back(new Rook(BLACK,Coordinate()));
+     	pieces.push_back(new Knight(BLACK,Coordinate()));
+	pieces.push_back(new Bishop(BLACK,Coordinate()));
+	pieces.push_back(new Queen(BLACK,Coordinate()));
+	pieces.push_back(new King(BLACK,Coordinate()));
+	pieces.push_back(new Bishop(BLACK,Coordinate()));
+     	pieces.push_back(new Knight(BLACK,Coordinate()));
+      	pieces.push_back(new Rook(BLACK,Coordinate()));
 	
 	/*set the position of these piecess */
         for(i=0;i<16;i++){
-	       	int * l =  new int[2];
-	       	l[0] = i/8;
-	       	l[1] = i%8;
-	       	pieces.at(i)->setPosition(l);
+	       	pieces.at(i)->setPosition(Coordinate(i/8,i%8));
 	}
 	for(i=48;i<64;i++){
-		int * l = new int[2];
-		l[0] = i/8;
-		l[1] = i%8;
-		pieces.at(i-32)->setPosition(l); 
+		pieces.at(i-32)->setPosition(Coordinate(i/8,i%8)); 
 	}
 
 	/*update variable board*/
@@ -154,7 +148,7 @@ void Board::initialize(){
 }
 
 /*whether a borad sqaure is empty or occupied by a piece */
-bool Board::occupied(const int * position) const{
+bool Board::occupied(Coordinate position) const{
 	if(board==NULL)
 		exit(-1) ;
 	if(board[position[0]][position[1]]==NULL)
@@ -164,7 +158,7 @@ bool Board::occupied(const int * position) const{
 }
 
 /* if a move is legal then make a move, return true */
-bool Board::makeMove(int * from, int * to){
+bool Board::makeMove(Coordinate from, Coordinate to){
 	Piece * p = board[from[0]][from[1]];
 	if(p!=NULL){
 		if(p->makeMove(to,*this)){
@@ -182,14 +176,10 @@ bool Board::makeMove(int * from, int * to){
 
 /*update variable board and delete target piece from list pieces and also
 from memory of that piece*/
-void Board::capture(int *from,int * to){
+void Board::capture(Coordinate from,Coordinate to){
 	Piece * p = this->getPiece(to);
 	for(int i=0;i<pieces.size();i++){
 		if(pieces.at(i)==p){
-			if(p->getIdentifier()==KING){
-				cout << p->getPosition()[0] << p->getPosition()[1] << endl;
-				exit(-1);
-			}
 			/*free memory,decremental variable numberOfPieces*/
 			Piece * temp = pieces.at(i);
 			pieces.erase(pieces.begin()+i);
@@ -203,29 +193,30 @@ void Board::capture(int *from,int * to){
 
 
 /*check whether a positi:on is under attack*/
-bool Board::isUnderAttack(int *cord,char color) const{
+bool Board::isUnderAttack(Coordinate cord,char color) const{
 	bool isUnderAttack = FALSE;
 	for(int i=0;i<pieces.size();i++){
 		if(isUnderAttack)
 			break;
 		Piece* opponent=pieces.at(i);
 		if(opponent->getColor()!=color){
-			vector<int*> moves;
+			vector<Coordinate> moves;
 			if(opponent->getIdentifier()==KING)
 				moves = ((King*)opponent)->legalMovesWithoutCastling(*this);
 			else
 				moves = opponent->legalMoves(*this);
 			for(int j=0;j<moves.size();j++){
-				if((moves.at(j)[0]==cord[0])&&(moves.at(j)[1]==cord[1]))
+				if(cord==moves.at(j)){
 					isUnderAttack = TRUE;
-				delete[] moves.at(j);	
+					break;
+				}
 			}
 		}
 	}
 	return isUnderAttack;
 }
 /*set and get methods for variable*/
-Piece * Board::getPiece(const int * position) const{
+Piece * Board::getPiece(Coordinate position) const{
 	
 	return board[position[0]][position[1]];
 
@@ -238,11 +229,10 @@ vector<Piece*> & Board::getPieces() {
 void Board::doPromotion(Piece * p){
 	for(int i=0;i<pieces.size();i++){
 		if(pieces.at(i)== p){
-			int * cord = new int[2];
-			cord[0] = p->getPosition()[0];
-			cord[1] = p->getPosition()[1];
+			Coordinate cord = p->getPosition();
 			pieces.at(i)= new Queen(p->getColor(),cord);
 			delete p;
+			break;
 		}
 	}
 

@@ -24,8 +24,8 @@ void HumanPlayer::play(Board &board){
 	c = command[2] - 'a';
 	d = command[3] - '1';
 		
-	int * from = new int[2];
-	int * to = new int[2];
+	Coordinate from =  Coordinate();
+	Coordinate to = Coordinate();
 	from[0] = b;
 	from[1] = a;
 	to[0] = d;
@@ -36,8 +36,6 @@ void HumanPlayer::play(Board &board){
 		board.makeMove(from,to);
 	else
 		cout << "error message " << endl;
-	delete[] from;
-	delete[] to;
 
 }
 

@@ -13,26 +13,24 @@ Pawn::Pawn(char c,Coordinate p):Piece::Piece('P',100,c,p){
 
 
 Piece *Pawn::copy(){
-	Coordinate cordCopy = position;
-	return new Pawn(this->color,cordCopy);
+	return new Pawn(this->color,position);
 }
 
 bool Pawn::isNeverMoved() const{
 	return neverMoved;
 }
 /*first test whether movement is legal, if it is legal , variable neverMoved needs to be set False,  then update the position and return true.And also if it is en passant , function Board::capture need be called to remove opponent's pawn. Furthermore, if it move forward two steps, function Board::setPassant is called to record that en passant is possible in next step.*/
-bool Pawn::makeMove(const Coordinate &toPosition,Board &board){
-	vector<Coordinate*> moves =  this->legalMoves(board);
+bool Pawn::makeMove(Coordinate toPosition,Board &board){
+	vector<Coordinate> moves =  this->legalMoves(board);
 	
 	Coordinate currentPosition = this->position;
 	bool isLegal  = FALSE;
-	for(vector<Coordinate*>::iterator it=moves.begin();it<moves.end();it++){
+	for(vector<Coordinate>::iterator it=moves.begin();it<moves.end();it++){
 		if((*it) == toPosition){
 			isLegal = TRUE;
 			this->neverMoved = FALSE;
+			break;
 		}
-		/*free memory*/
-		delete (*it);
 		
 	}
 	if(isLegal){
@@ -69,7 +67,7 @@ bool Pawn::canPromote(){
 
 /*below three functions are used to check what the king of move it is*/
 
-bool Pawn::isMoveForward(const Coordinate &toPosition){
+bool Pawn::isMoveForward(Coordinate toPosition){
 	Coordinate currentPosition = this->position;
 	if(this->color ==WHITE){
 		if(currentPosition == Coordinate(toPosition[0]-1,toPosition[1]))
@@ -86,7 +84,7 @@ bool Pawn::isMoveForward(const Coordinate &toPosition){
 	}
 }
 
-bool Pawn::isMoveTwoSteps(const Coordinate &toPosition){
+bool Pawn::isMoveTwoSteps(Coordinate toPosition){
 	Coordinate currentPosition = this->position;
 	if(this->color ==WHITE){
 		if(currentPosition == Coordinate(toPosition[0]-2,toPosition[1]))
@@ -105,7 +103,7 @@ bool Pawn::isMoveTwoSteps(const Coordinate &toPosition){
 }
 
 
-bool Pawn::isCapture(const Coordinate  &toPosition){
+bool Pawn::isCapture(Coordinate  toPosition){
 	Coordinate currentPosition = this->position;
 	if(this->color == WHITE){
 		if(abs(currentPosition[1]-toPosition[1])==1 && toPosition[0]-currentPosition[0]==1)
@@ -121,66 +119,55 @@ bool Pawn::isCapture(const Coordinate  &toPosition){
 	}
 }
 
-vector<int*> Pawn::legalMoves(const Board &board){
-	vector<Coordinate*> moves  = vector<Coordinate*>();
+vector<Coordinate> Pawn::legalMoves(const Board &board){
+	vector<Coordinate> moves = vector<Coordinate>(0);
 	
 	/*forward one step*/
- 	Coordinate * target = new Coordinate();
-	(*target)[0] = this->color == WHITE ? this->position[0]+1:this->position[0]-1;
-	(*target)[1] = this->position[1];
-	if(target->isInBoard() && !board.occupied(target))
+ 	Coordinate  target = Coordinate(); 
+	target[0] = this->color == WHITE ? this->position[0]+1:this->position[0]-1;
+	target[1] = this->position[1];
+	if(target.isInBoard() && !board.occupied(target))
 		moves.push_back(target);
-	else
-		delete target;
+
 	/*forward two steps*/
 	if(neverMoved){
-		target = new Coordinate();
-		(*target)[0] = this->color == WHITE ? this->position[0]+2 : this->position[0]-2;
-		(*target)[1] = this->position[1];
-		int middle[2] = {(this->position[0]+(*target)[0])/2,(*target)[1]};
-		if(target->isInBoard() && !board.occupied(middle) && !board.occupied(target)){
-			moves.push_back(target);
-		}
-		else
-			delete target;
+		Coordinate twoStep = Coordinate(); 
+		twoStep[0] = this->color == WHITE ? this->position[0]+2 : this->position[0]-2;
+		twoStep[1] = this->position[1];
+		Coordinate middle = Coordinate((this->position[0]+twoStep[0])/2,twoStep[1]);
+		if(twoStep.isInBoard() && !board.occupied(middle) && !board.occupied(target))
+			moves.push_back(twoStep);
 
 	}
 	/*capture*/
-	Coordinate* left = new Coordinate();
-	(*left)[0] = this->color == WHITE ? this->position[0]+1 : this->position[0]-1;
-	(*left)[1] = this->position[1]-1;
+	Coordinate left = Coordinate();
+	left[0] = this->color == WHITE ? this->position[0]+1 : this->position[0]-1;
+	left[1] = this->position[1]-1;
 	
-	if(left->isInBoard() && board.occupied(left) && board.getPiece(left)->getColor()!=this->color)
+	if(left.isInBoard() && board.occupied(left) && board.getPiece(left)->getColor()!=this->color)
 		moves.push_back(left);
-	else
-		delete left;
 
-	Coordinate* right=new Coordinate();
-	(*right)[0] = this->color == WHITE ? this->position[0]+1: this->position[0]-1;
-	(*right)[1] = this->position[1]+1;
-	if(right->isInBoard() && board.occupied(right) && board.getPiece(right)->getColor()!=this->color)
+	Coordinate right = Coordinate();
+	right[0] = this->color == WHITE ? this->position[0]+1: this->position[0]-1;
+	right[1] = this->position[1]+1;
+	if(right.isInBoard() && board.occupied(right) && board.getPiece(right)->getColor()!=this->color)
 		moves.push_back(right);
-	else
-		delete right;
+
 	/*en passant*/
 	Board::EnPassant * ep = board.getPassant();
 	/*check whether en-passant is possible */
 	if(ep->p!=NULL && ep->step == board.currentStep()){
 		char color = ep->p->getColor();
-		Coordinate &p1 = ep->p->getPosition();
-		Coordinate *p2 = new Coordinate();
-		(*p2)[1] = p1[1];
+		Coordinate p1 = ep->p->getPosition();
 		if(color==WHITE)
-			(*p2)[0] = p1[0]-1;
+			p1[0] = p1[0]-1;
 		else		
-			(*p2)[0] = p1[0]+1;
+			p1[0] = p1[0]+1;
 		/*test whether position p2 is reachable*/
-		if(this->color==WHITE && (*p2)[0]-this->position[0]==1 && abs((*p2)[1]-this->position[1])==1)
-			moves.push_back(p2);
-		else if(this->color==BLACK && (*p2)[0]-this->position[0]==-1 && abs((*p2)[1]-this->position[1])==1)
-			moves.push_back(p2);
-		else
-			delete p2;
+		if(this->color==WHITE && p1[0]-this->position[0]==1 && abs(p1[1]-this->position[1])==1)
+			moves.push_back(p1);
+		else if(this->color==BLACK && p1[0]-this->position[0]==-1 && abs(p1[1]-this->position[1])==1)
+			moves.push_back(p1);
 	}
 	
 	return moves;

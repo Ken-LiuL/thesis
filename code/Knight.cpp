@@ -4,32 +4,29 @@
 #include <iostream>
 using namespace std;
 
-Knight::Knight(char c,int * p)
+Knight::Knight(char c,Coordinate p)
 	:Piece::Piece('N',300,c,p)	
 	{}
 
 Piece *Knight::copy(){
-	int *cord =new int[2];
-	cord[0] =  this->position[0];
-	cord[1] = this->position[1];
-	return new Knight(this->color,cord);
+	return new Knight(this->color,position);
 }
-bool Knight::makeMove(const int * toPosition, Board &b){
-	vector<int*> moves = this->legalMoves(b);
+bool Knight::makeMove(Coordinate toPosition, Board &b){
+	vector<Coordinate> moves = this->legalMoves(b);
 	bool isLegal=FALSE;
-	for(vector<int*>::iterator it=moves.begin();it<moves.end();it++){
-		if(toPosition[0]==(*it)[0] && toPosition[1]==(*it)[1]){
+	for(vector<Coordinate>::iterator it=moves.begin();it<moves.end();it++){
+		if((*it)==toPosition){
 			isLegal = TRUE;
 			this->setPosition(toPosition);
+			break;
 		}
-		delete[] (*it);
 	}
 	return isLegal;	
 }
 
 
-vector<int*> Knight::legalMoves(const Board &board){
-	vector<int*> moves = vector<int*>();
+vector<Coordinate> Knight::legalMoves(const Board &board){
+	vector<Coordinate> moves(0);
 	//horizontal left
 	int left[2] = {this->position[0],this->position[1]-2};
 	int left_up[2] = {left[0]+1,left[1]};
@@ -59,22 +56,18 @@ vector<int*> Knight::legalMoves(const Board &board){
 
 	/*check whether these positions are reachable*/
 	for(int i=0;i<8;i++){
-		if(this->reachablePosition(possibleMoves[i],board)){
-			int * c = new int[2];
-			c[0] = possibleMoves[i][0];
-			c[1] = possibleMoves[i][1];
-			moves.push_back(c);
+		Coordinate cord(possibleMoves[i][0],possibleMoves[i][1]);
+		if(cord.isInBoard() && this->reachablePosition(cord,board)){
+			moves.push_back(cord);
 		}
 	}
 	return moves;
 }
 
-bool Knight::reachablePosition(const int * cord,const Board &board){
-	/*check bouondary*/
-	if(cord[0]<8 && cord[0] > -1 && cord[1]<8 && cord[1] > -1)
-		/*check whether it is occupied by a friend piece*/
-		if(!board.occupied(cord) || (board.occupied(cord) && board.getPiece(cord)->getColor() != this->color ))
-			return TRUE;
+bool Knight::reachablePosition(Coordinate cord,const Board &board){
+	/*check whether it is occupied by a friend piece*/
+	if(!board.occupied(cord) || (board.occupied(cord) && board.getPiece(cord)->getColor() != this->color ))
+		return TRUE;
 	return FALSE;
 }
 

@@ -15,7 +15,10 @@ Coordinate::Coordinate(){
 bool Coordinate::isInBoard() const{
 	if(rank<8 && rank>-1 && col<8 && col>-1)
 		return TRUE;
+	else
+		return FALSE;
 }
+
 void Coordinate::update(const Coordinate &cord){
 	rank = cord.getRank();
 	col = cord.getCol();
@@ -25,7 +28,7 @@ int Coordinate::operator [](int i) const{
 	return i==0 ? rank : col;
 }
 
-bool Coordinate::operator==(Coordinate &cord){
+bool Coordinate::operator==(Coordinate cord) const{
 	if(cord[0]==(*this)[0] && cord[1]== (*this)[1])
 		return TRUE;
 	else
@@ -51,3 +54,4 @@ void Coordinate::setRank(const int x){
 void Coordinate::setCol(const int y){
 	col = y;
 }
+

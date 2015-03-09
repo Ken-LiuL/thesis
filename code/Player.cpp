@@ -10,8 +10,8 @@ Player::Player(char color){
 
 bool Player::amICheckmated(Board &board){
 	vector<Piece*> pieces = board.getPieces();
-	vector<int*> opponentAttack;
-	int * positionOfKing; 
+	vector<Coordinate> opponentAttack;
+	Coordinate positionOfKing; 
 	for(int i=0;i<pieces.size();i++){
 		if((pieces.at(i)->getColor()==this->color) && (pieces.at(i)->getIdentifier() == KING)){
 			positionOfKing = pieces.at(i)->getPosition();

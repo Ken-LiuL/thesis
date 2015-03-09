@@ -166,10 +166,8 @@ bool Board::occupied(const int * position) const{
 bool Board::makeMove(int * from, int * to){
 	Piece * p = board[from[0]][from[1]];
 	if(p!=NULL){
-		cout << "sec1.6 ::" << endl;
 		if(p->makeMove(to,*this)){
 		/*if is a capture move,then list pieces and variable need to be updated */
-			cout << "sect1.7:" << endl;
 			if(this->getPiece(to)!=NULL)
 				this->capture(from,to);
 			this->increaseSteps();

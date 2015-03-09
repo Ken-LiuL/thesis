@@ -29,15 +29,11 @@ void ComputerPlayer::play(Board &board){
 		if(findMove)
 			break;
 		vector<int*> moves =  (pieces.at(j))->legalMoves(board);
-		cout << pieces.at(j)->getPosition()[0] << "+" << pieces.at(j)->getPosition()[1] << endl;
 		while(!moves.empty()){
 			Board boardBackup =  board;
 			i = rand() % moves.size();/*generate random move*/
-			cout << "sec1: " << endl;
 			pieces.at(j)->getPosition();
-			cout << "sec1.5::::" << endl;
 			bool t = boardBackup.makeMove((pieces.at(j))->getPosition(),moves.at(i));
-			cout << "sec2:" << endl;
 			if( t && (!amICheckmated(boardBackup))){
 				board.makeMove((pieces.at(j))->getPosition(),moves.at(i));
 				findMove = TRUE;
@@ -54,6 +50,6 @@ void ComputerPlayer::play(Board &board){
 	if(findMove)
 		return;
 	cout << this->getColor() <<" lose" << endl ;
-	exit(-1);
+	exit(0);
 }
 

@@ -25,7 +25,7 @@ bool King::makeMove(const int * toPosition,Board &board){
 	for(vector<int*>::iterator it=moves.begin();it<moves.end();it++){
 		if((*it)[0]==toPosition[0] && (*it)[1]==toPosition[1]){
 			isLegal = TRUE;
-			if(abs(this->getPosition()[1]-toPosition[1])==2){
+			if(abs((float)(this->getPosition()[1]-toPosition[1]))==2){
 				if(toPosition[1]==2){
 					int rookCord[] = {toPosition[0],0};
 					Piece* rook = board.getPiece(rookCord);
@@ -83,12 +83,12 @@ vector<int*> King::legalMoves(const Board &board){
 		int cordRook1[] = {this->position[0],0};
 		int cordRook2[] = {this->position[0],7};
 		Rook *rook1 = (Rook*)board.getPiece(cordRook1);
-		Rook *rook2 =(Rook*)board.getPiece(cordRook2);
+		Rook *rook2 = (Rook*)board.getPiece(cordRook2);
 		/*the king can not be checkmated*/
 		if(board.isUnderAttack(this->position,this->color))
 			return moves;
 		/*check rook1*/
-		if(rook1!=NULL && rook1->getColor()==this->color && rook1->getIdentifier()==ROOK && rook1->isNeverMoved()){
+		if(rook1!=NULL &&  rook1->getColor()==this->color && rook1->getIdentifier()==ROOK && rook1->isNeverMoved()){
 			int cord1[] = {cordRook1[0],1};
 			int cord2[] = {cordRook1[0],2};
 			int cord3[] = {cordRook1[0],3};
@@ -103,7 +103,7 @@ vector<int*> King::legalMoves(const Board &board){
 
 		}
 		/*check rook2*/
-		if(rook2!=NULL && rook2->getColor()==this->color && rook2->getIdentifier()==ROOK && rook1->isNeverMoved()){
+		if(rook2!=NULL &&  rook2->getColor()==this->color && rook2->getIdentifier()==ROOK && rook2->isNeverMoved()){
 		   	int cord1[] = {cordRook2[0],5};
 			int cord2[] = {cordRook2[0],6};
 			if(!board.occupied(cord1)&&!board.occupied(cord2))

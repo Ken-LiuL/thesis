@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include "Constants.h"
+#include "Coordinate.h"
 #include "Board.h"
 #include "Bishop.h"
 #include "Queen.h"

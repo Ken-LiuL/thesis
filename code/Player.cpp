@@ -4,7 +4,7 @@
 #include "Constants.h"
 #include <vector>
 using namespace std;
-Player::Player(char color){
+Player::Player(const char color){
 	this->color =color;
 }
 

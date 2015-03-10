@@ -7,7 +7,7 @@
 #include "Constants.h"
 using namespace std;
 
-King::King(char c,Coordinate p)
+King::King(const char c,Coordinate p)
 	:Piece::Piece('K',2000,c,p)	
 	{
 	neverMoved = TRUE;
@@ -16,7 +16,7 @@ King::King(char c,Coordinate p)
 Piece *King::copy(){
 	return new King(this->color,position);
 }
-bool King::makeMove(Coordinate toPosition,Board &board){
+bool King::makeMove(const Coordinate toPosition,Board &board){
 	vector<Coordinate> moves = this->legalMoves(board);
 	bool isLegal = FALSE;
 	for(vector<Coordinate>::iterator it=moves.begin();it<moves.end();it++){

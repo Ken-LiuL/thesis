@@ -1,7 +1,7 @@
 #include "Coordinate.h"
 #include "Constants.h"
 
-Coordinate::Coordinate(int x, int y){
+Coordinate::Coordinate(const int x, const int y){
 	 rank = x;
 	 col = y;
 }
@@ -24,18 +24,18 @@ void Coordinate::update(const Coordinate &cord){
 	col = cord.getCol();
 }
 
-int Coordinate::operator [](int i) const{
+int Coordinate::operator [](const int i) const{
 	return i==0 ? rank : col;
 }
 
-bool Coordinate::operator==(Coordinate cord) const{
+bool Coordinate::operator==(const Coordinate cord) const{
 	if(cord[0]==(*this)[0] && cord[1]== (*this)[1])
 		return TRUE;
 	else
 		return FALSE;
 }
 
-int & Coordinate::operator [](int i){
+int & Coordinate::operator [](const int i){
 	return i==0 ? rank : col;
 }
 

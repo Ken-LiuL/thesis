@@ -4,14 +4,14 @@
 #include <iostream>
 using namespace std;
 
-Bishop::Bishop(char c,Coordinate p)
+Bishop::Bishop(const char c,Coordinate p)
 	:Piece::Piece('B',300,c,p)	
 	{}
 
 Piece *Bishop::copy(){
 	return new Bishop(this->color,position);
 }
-bool Bishop::makeMove(Coordinate toPosition,Board &b){
+bool Bishop::makeMove(const Coordinate toPosition,Board &b){
 	vector<Coordinate>  moveVector = this->legalMoves(b);
 	bool isLegal =  FALSE;
 	for(vector<Coordinate>::iterator it=moveVector.begin();it<moveVector.end();it++){

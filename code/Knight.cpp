@@ -4,14 +4,14 @@
 #include <iostream>
 using namespace std;
 
-Knight::Knight(char c,Coordinate p)
+Knight::Knight(const char c,Coordinate p)
 	:Piece::Piece('N',300,c,p)	
 	{}
 
 Piece *Knight::copy(){
 	return new Knight(this->color,position);
 }
-bool Knight::makeMove(Coordinate toPosition, Board &b){
+bool Knight::makeMove(const Coordinate toPosition, Board &b){
 	vector<Coordinate> moves = this->legalMoves(b);
 	bool isLegal=FALSE;
 	for(vector<Coordinate>::iterator it=moves.begin();it<moves.end();it++){
@@ -64,7 +64,7 @@ vector<Coordinate> Knight::legalMoves(const Board &board){
 	return moves;
 }
 
-bool Knight::reachablePosition(Coordinate cord,const Board &board){
+bool Knight::reachablePosition(const Coordinate cord,const Board &board){
 	/*check whether it is occupied by a friend piece*/
 	if(!board.occupied(cord) || (board.occupied(cord) && board.getPiece(cord)->getColor() != this->color ))
 		return TRUE;

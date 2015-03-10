@@ -19,7 +19,7 @@ using namespace std;
 
 /*This class mainly relate with interaction between board display and pieceschanges under different moves*/
 
-Board::Board(int n,vector<Piece *> p){
+Board::Board(const int n,vector<Piece *> p){
 	pieces = p; /* list that contains pointers of pieces on the board */
 	passant = new Board::EnPassant(); /* struct { Piece * and step} */
 	steps = 0;/* record how many steps has been so far */
@@ -148,7 +148,7 @@ void Board::initialize(){
 }
 
 /*whether a borad sqaure is empty or occupied by a piece */
-bool Board::occupied(Coordinate position) const{
+bool Board::occupied(const Coordinate position) const{
 	if(board==NULL)
 		exit(-1) ;
 	if(board[position[0]][position[1]]==NULL)
@@ -158,7 +158,7 @@ bool Board::occupied(Coordinate position) const{
 }
 
 /* if a move is legal then make a move, return true */
-bool Board::makeMove(Coordinate from, Coordinate to){
+bool Board::makeMove(const Coordinate from,const  Coordinate to){
 	Piece * p = board[from[0]][from[1]];
 	if(p!=NULL){
 		if(p->makeMove(to,*this)){
@@ -176,7 +176,7 @@ bool Board::makeMove(Coordinate from, Coordinate to){
 
 /*update variable board and delete target piece from list pieces and also
 from memory of that piece*/
-void Board::capture(Coordinate from,Coordinate to){
+void Board::capture(const Coordinate from,const Coordinate to){
 	Piece * p = this->getPiece(to);
 	for(int i=0;i<pieces.size();i++){
 		if(pieces.at(i)==p){
@@ -193,7 +193,7 @@ void Board::capture(Coordinate from,Coordinate to){
 
 
 /*check whether a positi:on is under attack*/
-bool Board::isUnderAttack(Coordinate cord,char color) const{
+bool Board::isUnderAttack(const Coordinate cord,const char color) const{
 	bool isUnderAttack = FALSE;
 	for(int i=0;i<pieces.size();i++){
 		if(isUnderAttack)
@@ -216,13 +216,13 @@ bool Board::isUnderAttack(Coordinate cord,char color) const{
 	return isUnderAttack;
 }
 /*set and get methods for variable*/
-Piece * Board::getPiece(Coordinate position) const{
+Piece * Board::getPiece(const Coordinate position) const{
 	
 	return board[position[0]][position[1]];
 
 }
 
-vector<Piece*> & Board::getPieces() {
+vector<Piece*> & Board::getPieces()  {
 	return pieces;
 }
 /*delete the original pawn and replace it with the piece that want to be promoted to. Currently just directly promote a pawn to a queen, more clever work need be done*/

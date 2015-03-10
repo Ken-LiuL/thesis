@@ -8,7 +8,7 @@
 #include <ctime>
 using namespace std;
 
-ComputerPlayer::ComputerPlayer(char color,char strategy):Player::Player(color){
+ComputerPlayer::ComputerPlayer(const char color,const char strategy):Player::Player(color){
 	this->strategy = strategy;
 }
 

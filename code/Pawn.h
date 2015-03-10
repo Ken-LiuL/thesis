@@ -3,14 +3,14 @@
 class Board;
 class Pawn:public Piece{
  	public:
-		Pawn(char color, int * position);
-	        bool makeMove(const int * toPosition, Board &board);
-	        std::vector<int*> legalMoves(const Board &b);
+		Pawn(const char color, Coordinate position);
+	        bool makeMove(const Coordinate toPosition, Board &board);
+	        std::vector<Coordinate> legalMoves(const Board &b);
 		Piece *copy();
 		bool isNeverMoved() const;
-		bool isMoveForward(const int * toPosition);
-		bool isMoveTwoSteps(const int * toPosition);
-		bool isCapture(const int * toPosition);
+		bool isMoveForward(const Coordinate toPosition);
+		bool isMoveTwoSteps(const Coordinate toPosition);
+		bool isCapture(const Coordinate toPosition);
 		bool canPromote();
 	protected:
 		bool neverMoved;

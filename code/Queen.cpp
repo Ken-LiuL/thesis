@@ -4,14 +4,14 @@
 #include <iostream>
 using namespace std;
 
-Queen::Queen(char c,Coordinate p)
+Queen::Queen(const char c,Coordinate p)
 	:Piece::Piece('Q',900,c,p)	
 	{}
 
 Piece *Queen::copy(){
 	return new Queen(this->color,position);
 }
-bool Queen::makeMove(Coordinate toPosition,Board  &b){
+bool Queen::makeMove(const Coordinate toPosition,Board  &b){
 	/*every move of queen is legal, so just to update its position
 	so we just need to check whether target position has not been 
 	occupied by friendly piece and has not been hindered by other pieces*/

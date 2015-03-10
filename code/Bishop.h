@@ -4,8 +4,8 @@
 class Board;
 class Bishop:public Piece{
  	public:
-		Bishop(char color, int * position);
-	        bool makeMove(const int * toPosition,Board &b);
+		Bishop(const char color, Coordinate position);
+	        bool makeMove(const Coordinate toPosition,Board &b);
 		Piece *copy();
-	        std::vector<int*> legalMoves(const Board &b);
+	        std::vector<Coordinate> legalMoves(const Board &b);
 };

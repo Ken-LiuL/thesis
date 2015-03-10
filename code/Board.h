@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "Coordinate.h"
 class Piece;
 class Board{
 	public:
@@ -8,7 +9,7 @@ class Board{
 			int step;
 		};  
 	
-		Board(int n,std::vector<Piece *>  p);
+		Board(const int n,std::vector<Piece *>  p);
 		Board(Board &b);
 		~Board();
 		void record(int *from,int*to);
@@ -16,16 +17,16 @@ class Board{
 		void freshBoard();
 		void display();
 		void doPromotion(Piece * p);
-		bool occupied(const int * position) const;
+		bool occupied(const Coordinate position) const;
 		void increaseSteps();
-		void capture(int * from, int * to);
-		bool isUnderAttack(int * cord,char color) const;
+		void capture(const Coordinate from, const  Coordinate to);
+		bool isUnderAttack(const Coordinate cord, const char color) const;
 	        std::vector<Piece*> &getPieces();
-		Piece * getPiece(const int * toPosition) const;
+		Piece * getPiece(const Coordinate toPosition) const ;
 		EnPassant * getPassant() const;
 		int currentStep() const;
 		void setPassant(Piece * p);
-		bool makeMove(int * from,int * to);
+		bool makeMove(const Coordinate from,const Coordinate to);
 	
 
 	protected:

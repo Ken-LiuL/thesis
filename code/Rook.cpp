@@ -4,7 +4,7 @@
 #include "Constants.h"
 using namespace std;
 
-Rook::Rook(char c,Coordinate p)
+Rook::Rook(const char c,Coordinate p)
 	:Piece::Piece('R',500,c,p)	
 	{
 	neverMoved = TRUE;
@@ -17,7 +17,7 @@ Piece *Rook::copy(){
 bool Rook::isNeverMoved(){
 	return neverMoved;
 }
-bool Rook::makeMove(Coordinate  toPosition, Board &b){
+bool Rook::makeMove(const Coordinate  toPosition, Board &b){
 	/*check whether toPosition is in legalMoves, and free memory in moveVector*/
 	vector<Coordinate>  moveVector = this->legalMoves(b);
 	bool isLegal =  FALSE;

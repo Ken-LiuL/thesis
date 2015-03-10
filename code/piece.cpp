@@ -1,7 +1,7 @@
 #include "piece.h"
 #include <iostream>
 
-Piece::Piece(char i,int v,char c,Coordinate p){
+Piece::Piece(const char i,const int v,const char c,Coordinate p){
 	value = v;
 	color = c;
         position = p;
@@ -16,7 +16,7 @@ char Piece::getColor() const{
 	return color;
 }
 
-void Piece::setPosition(Coordinate p){
+void Piece::setPosition(const Coordinate p){
 	position[0] = p[0];
 	position[1] = p[1];
 		

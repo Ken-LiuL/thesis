@@ -4,10 +4,10 @@
 class Board;
 class Rook:public Piece{
  	public:
-		Rook(char color, int * position);
-	        bool makeMove(const int * toPosition,Board &b);
+		Rook(const char color, Coordinate position);
+	        bool makeMove(const Coordinate toPosition,Board &b);
 		Piece *copy();
-	        std::vector<int*> legalMoves(const Board &b);
+	        std::vector<Coordinate> legalMoves(const Board &b);
 		bool isNeverMoved();
 	protected:	
 		bool neverMoved;

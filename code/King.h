@@ -4,11 +4,11 @@
 class Board;
 class King:public Piece{
  	public:
-		King( char color, int * position);
-	        bool makeMove(const int * toPosition,Board &b);
+		King(const char color, Coordinate position);
+	        bool makeMove(const Coordinate toPosition,Board &b);
 		Piece *copy();
-	        std::vector<int*> legalMoves(const Board &b);
-		std::vector<int*> legalMovesWithoutCastling(const Board &b);
+	        std::vector<Coordinate> legalMoves(const Board &b);
+		std::vector<Coordinate> legalMovesWithoutCastling(const Board &b);
 	protected:
 		bool neverMoved;
 };

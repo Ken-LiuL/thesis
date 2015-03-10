@@ -4,10 +4,10 @@
 class Board;
 class Knight:public Piece{
  	public:
-		Knight(char color, int * position);
-	        bool makeMove(const int * toPosition,Board &b);
-	        std::vector<int*> legalMoves(const Board &b);
+		Knight(const char color, Coordinate position);
+	        bool makeMove(const Coordinate toPosition,Board &b);
+	        std::vector<Coordinate> legalMoves(const Board &b);
 		Piece *copy();
 	private:
-		bool reachablePosition(const int * p,const Board &b);
+		bool reachablePosition(const Coordinate p,const Board &b);
 };

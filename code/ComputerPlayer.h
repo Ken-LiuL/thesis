@@ -5,7 +5,7 @@ class ComputerPlayer:public Player{
 	private:
 		char strategy;
 	public:
-		ComputerPlayer(char color,char stratege='R');
+		ComputerPlayer(const char color,const char stratege='R');
 		void play(Board &board);
 		
 

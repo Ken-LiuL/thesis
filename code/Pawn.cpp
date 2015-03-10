@@ -5,7 +5,7 @@
 #include <stdlib.h>
 using namespace std;
 
-Pawn::Pawn(char c,Coordinate p):Piece::Piece('P',100,c,p){
+Pawn::Pawn(const char c,Coordinate p):Piece::Piece('P',100,c,p){
 	/*this variable served for en passant,
 	and  whether a pawn can move forward two step */
 	neverMoved = TRUE;	
@@ -20,7 +20,7 @@ bool Pawn::isNeverMoved() const{
 	return neverMoved;
 }
 /*first test whether movement is legal, if it is legal , variable neverMoved needs to be set False,  then update the position and return true.And also if it is en passant , function Board::capture need be called to remove opponent's pawn. Furthermore, if it move forward two steps, function Board::setPassant is called to record that en passant is possible in next step.*/
-bool Pawn::makeMove(Coordinate toPosition,Board &board){
+bool Pawn::makeMove(const Coordinate toPosition,Board &board){
 	vector<Coordinate> moves =  this->legalMoves(board);
 	
 	Coordinate currentPosition = this->position;
@@ -67,7 +67,7 @@ bool Pawn::canPromote(){
 
 /*below three functions are used to check what the king of move it is*/
 
-bool Pawn::isMoveForward(Coordinate toPosition){
+bool Pawn::isMoveForward(const Coordinate toPosition){
 	Coordinate currentPosition = this->position;
 	if(this->color ==WHITE){
 		if(currentPosition == Coordinate(toPosition[0]-1,toPosition[1]))
@@ -84,7 +84,7 @@ bool Pawn::isMoveForward(Coordinate toPosition){
 	}
 }
 
-bool Pawn::isMoveTwoSteps(Coordinate toPosition){
+bool Pawn::isMoveTwoSteps(const Coordinate toPosition){
 	Coordinate currentPosition = this->position;
 	if(this->color ==WHITE){
 		if(currentPosition == Coordinate(toPosition[0]-2,toPosition[1]))
@@ -103,7 +103,7 @@ bool Pawn::isMoveTwoSteps(Coordinate toPosition){
 }
 
 
-bool Pawn::isCapture(Coordinate  toPosition){
+bool Pawn::isCapture(const Coordinate  toPosition){
 	Coordinate currentPosition = this->position;
 	if(this->color == WHITE){
 		if(abs(currentPosition[1]-toPosition[1])==1 && toPosition[0]-currentPosition[0]==1)

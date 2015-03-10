@@ -7,15 +7,15 @@ class Coordinate{
 
 	public:
 		bool isInBoard() const;
-		Coordinate(int x, int y);
+		Coordinate(const int x, const int y);
 		Coordinate();
-		int operator[](int i) const;
+		int operator[](const int i) const;
 		int getRank() const;
 		int getCol() const;		
 		void update(const Coordinate &c);
-		int & operator[](int i);
+		int & operator[](const int i);
 		void setRank(const int x);
 		void setCol(const int y);
-		bool operator==(Coordinate &cord);
+		bool operator==(const Coordinate cord) const;
 
 };

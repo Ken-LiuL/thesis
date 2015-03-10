@@ -8,7 +8,7 @@
 #include <cstdlib>
 using namespace std;
 
-HumanPlayer::HumanPlayer(char c):Player::Player(c){
+HumanPlayer::HumanPlayer(const char c):Player::Player(c){
 }
 
 void HumanPlayer::play(Board &board){	

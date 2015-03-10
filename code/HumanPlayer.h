@@ -3,7 +3,7 @@
 class Board;
 class HumanPlayer:public Player{
 	public:
-		HumanPlayer(char c);
+		HumanPlayer(const char c);
 		void play(Board &board);
 
 };

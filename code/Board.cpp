@@ -15,6 +15,8 @@
 #include "Rook.h"
 #include "HumanPlayer.h"
 #include "ComputerPlayer.h"
+#include "algorithm/Node.h"
+#include "algorithm/Distribution.h"
 using namespace std;
 
 /*This class mainly relate with interaction between board display and pieceschanges under different moves*/
@@ -25,6 +27,7 @@ Board::Board(const int n,vector<Piece *> p){
 	steps = 0;/* record how many steps has been so far */
 }
 
+
 /*destructor , free memory of piece and passant*/
 Board::~Board(){
 	for(vector<Piece*>::iterator it=pieces.begin();it<pieces.end();it++)
@@ -32,6 +35,13 @@ Board::~Board(){
 		delete (*it);
 	}
 	delete passant;
+
+}
+
+Board::Board(){
+	pieces = vector<Piece*>(0);
+	passant = new Board::EnPassant();
+
 }
 
 Board::Board(Board &b){
@@ -221,7 +231,6 @@ Piece * Board::getPiece(const Coordinate position) const{
 	return board[position[0]][position[1]];
 
 }
-
 vector<Piece*> & Board::getPieces()  {
 	return pieces;
 }
@@ -236,6 +245,30 @@ void Board::doPromotion(Piece * p){
 		}
 	}
 
+}
+
+Board &Board::operator=(Board &b){
+	steps = b.currentStep();
+        vector<Piece*> &piecesB = b.getPieces();
+
+	/*free old one*/
+	for(vector<Piece*>::iterator it=pieces.begin();it<pieces.end();it++){
+		delete (*it);
+	}
+	
+	pieces.clear();
+	/*assign new one*/
+	for(vector<Piece*>::iterator it=piecesB.begin();it<piecesB.end();it++){
+		pieces.push_back((*it)->copy());
+		
+	}
+	
+	this->freshBoard();
+
+	passant->p = b.getPassant()->p;
+	passant->step = b.getPassant()->step;
+	
+	return *this;
 }
 
 Board::EnPassant * Board::getPassant() const{
@@ -262,11 +295,16 @@ int main(){
 	Board start(32,vector<Piece*>(0));
 	start.initialize();
 	start.display();
+	
+
 	HumanPlayer human1(BLACK);
 	HumanPlayer human2(WHITE);
-	ComputerPlayer computer1(BLACK);
-	ComputerPlayer computer2(WHITE);
-	while(1){
+	ComputerPlayer computer1(BLACK,'A');
+	ComputerPlayer computer2(WHITE,'A');
+	
+	Distribution d(1,2);
+
+ 	while(1){
 		//human1.play(start);
 		//start.display();
 		//human2.play(start);
@@ -275,6 +313,6 @@ int main(){
 		start.display();
 		computer2.play(start);
 		start.display();
-		}
+	}
 
 }

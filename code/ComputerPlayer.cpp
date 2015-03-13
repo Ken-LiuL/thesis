@@ -2,6 +2,7 @@
 #include "Constants.h"
 #include "Board.h"
 #include "piece.h"
+#include "algorithm/Node.h"
 #include <vector>
 #include <iostream>
 #include <cstdlib>
@@ -12,8 +13,73 @@ ComputerPlayer::ComputerPlayer(const char color,const char strategy):Player::Pla
 	this->strategy = strategy;
 }
 
-/*Random strategy used to test whether there are bugs,like memory leakage*/
 void ComputerPlayer::play(Board &board){
+	if(this->strategy=='R')
+		randomPlay(board);
+	else{
+		algorithmPlay(board);
+	}
+
+}
+
+void ComputerPlayer::algorithmPlay(Board &board){
+	/*set v0,m0 as 1,0 for root*/
+	Distribution prior(0,1);
+	Node root(board,prior,this->color);
+	root.sampleG();
+	root.setVisited();
+	while(true){
+		
+		descent(root);	
+
+	}	
+
+}
+
+Distribution ComputerPlayer::descent(Node &n){
+	if(n.isVisited()){
+		
+		Node* c = n.getChild();
+		/*update message to c*/
+		c->sampleG();
+		c->setDistribution(c->getDistribution()/c->getMessageFromParent());
+		Distribution messageExceptC = n.getDistribution()/c->getMessageToParent();
+		Distribution messageIntegral = Distribution(messageExceptC.getMean(),messageExceptC.getVar()+1);
+	
+		c->setMessageFromParent(messageIntegral);
+
+		c->setDistribution(c->getDistribution()*messageIntegral);
+		Distribution newMessage = descent(*c);
+		
+		/*update marginal of n*/
+		n.setDistribution(n.getDistribution()/c->getMessageToParent()*newMessage);
+		c->setMessageToParent(newMessage);
+	}
+
+	else{
+		Node * parent  = n.getParent();
+		/*divide roll out from the parent*/
+		Distribution newParent = parent->getDistribution()/parent->getRollOut();
+		/*update i*/
+		n.setDistribution(n.getDistribution()/n.getMessageFromParent());
+		Distribution messageExceptC = newParent/n.getMessageToParent();
+		Distribution messageIntegral = Distribution(messageExceptC.getMean(),messageExceptC.getVar()+1);
+		n.setDistribution(n.getDistribution()*messageIntegral);	
+		
+		n.setMessageFromParent(messageIntegral);
+		
+		/*dealing with roll out*/
+
+		/*assume this is returned by the roll out*/
+	        int length = 3;
+		int result = 1;
+		/*call function to calculated the approximate message*/
+		
+	}
+}
+
+/*Random strategy used to test whether there are bugs,like memory leakage*/
+void ComputerPlayer::randomPlay(Board &board){
  	srand(time(NULL));
 	vector<Piece*> p = board.getPieces();
 	vector<Piece*> pieces = vector<Piece*>(0);

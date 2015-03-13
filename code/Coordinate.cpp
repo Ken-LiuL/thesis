@@ -6,10 +6,6 @@ Coordinate::Coordinate(const int x, const int y){
 	 col = y;
 }
 
-Coordinate::Coordinate(){
-	rank = 0;
-	col = 0;
-}
 
 
 bool Coordinate::isInBoard() const{

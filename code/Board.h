@@ -11,7 +11,9 @@ class Board{
 	
 		Board(const int n,std::vector<Piece *>  p);
 		Board(Board &b);
+		Board();
 		~Board();
+		Board &operator=(Board &board);
 		void record(int *from,int*to);
 		void initialize();
 		void freshBoard();

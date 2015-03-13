@@ -7,8 +7,7 @@ class Coordinate{
 
 	public:
 		bool isInBoard() const;
-		Coordinate(const int x, const int y);
-		Coordinate();
+		Coordinate(const int x=0, const int y=0);
 		int operator[](const int i) const;
 		int getRank() const;
 		int getCol() const;		

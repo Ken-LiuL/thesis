@@ -1,7 +1,7 @@
 #pragma once
 class Board;
 class Player{
-	private:
+	protected:
 		char color;
 	public:
 		Player(const char color);

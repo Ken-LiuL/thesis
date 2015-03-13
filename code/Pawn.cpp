@@ -120,10 +120,10 @@ bool Pawn::isCapture(const Coordinate  toPosition){
 }
 
 vector<Coordinate> Pawn::legalMoves(const Board &board){
-	vector<Coordinate> moves = vector<Coordinate>(0);
+	vector<Coordinate> moves(0);
 	
 	/*forward one step*/
- 	Coordinate  target = Coordinate(); 
+ 	Coordinate  target; 
 	target[0] = this->color == WHITE ? this->position[0]+1:this->position[0]-1;
 	target[1] = this->position[1];
 	if(target.isInBoard() && !board.occupied(target))
@@ -131,7 +131,7 @@ vector<Coordinate> Pawn::legalMoves(const Board &board){
 
 	/*forward two steps*/
 	if(neverMoved){
-		Coordinate twoStep = Coordinate(); 
+		Coordinate twoStep; 
 		twoStep[0] = this->color == WHITE ? this->position[0]+2 : this->position[0]-2;
 		twoStep[1] = this->position[1];
 		Coordinate middle = Coordinate((this->position[0]+twoStep[0])/2,twoStep[1]);
@@ -140,7 +140,7 @@ vector<Coordinate> Pawn::legalMoves(const Board &board){
 
 	}
 	/*capture*/
-	Coordinate left = Coordinate();
+	Coordinate left;
 	left[0] = this->color == WHITE ? this->position[0]+1 : this->position[0]-1;
 	left[1] = this->position[1]-1;
 	

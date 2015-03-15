@@ -6,7 +6,7 @@ class Player{
 	public:
 		Player(const char color);
 		virtual void play(Board &board)=0;
-		bool amICheckmated(Board &board);
+		static bool amICheckmated(Board &board,char color);
 		char getColor();
 
 };

@@ -23,7 +23,8 @@ class Board{
 		void increaseSteps();
 		void capture(const Coordinate from, const  Coordinate to);
 		bool isUnderAttack(const Coordinate cord, const char color) const;
-	        std::vector<Piece*> &getPieces();
+		std::vector<Board*> nextBoardStates(char color);
+	        std::vector<Piece*> &getPieces() ;
 		Piece * getPiece(const Coordinate toPosition) const ;
 		EnPassant * getPassant() const;
 		int currentStep() const;

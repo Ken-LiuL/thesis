@@ -10,5 +10,6 @@ class Distribution{
 		Distribution operator*(const Distribution &dis);
 		Distribution operator/(const Distribution &dis); 
 		double getSample();
-
+		double phi(double x);
+		double pdf(double x);
 };

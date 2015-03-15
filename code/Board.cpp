@@ -247,6 +247,25 @@ void Board::doPromotion(Piece * p){
 
 }
 
+vector<Board*> Board::nextBoardStates(char color){
+	std::vector<Board*> states(0);
+	for(vector<Piece*>::iterator it=this->pieces.begin();it<this->pieces.end();it++){
+		if((*it)->getColor()!=color)
+			continue;
+
+		vector<Coordinate> moves = (*it)->legalMoves(*this);
+		for(vector<Coordinate>::iterator iit=moves.begin();iit<moves.end();iit++){
+			Board* boardBackup  = new Board();
+			*boardBackup = (*this);
+			if(boardBackup->makeMove((*it)->getPosition(),(*iit))&& !Player::amICheckmated((*boardBackup),color)){
+				states.push_back(boardBackup);
+				}
+		}
+
+	}
+	return states;
+}
+
 Board &Board::operator=(Board &b){
 	steps = b.currentStep();
         vector<Piece*> &piecesB = b.getPieces();
@@ -274,6 +293,7 @@ Board &Board::operator=(Board &b){
 Board::EnPassant * Board::getPassant() const{
 	return passant;
 }
+
 
 
 /*since when call this function, the function increaseSteps() has not bee called so that a +1 is needed*/

@@ -8,6 +8,8 @@
 #include <iostream>
 using namespace std;
 
+/*This class provide interface to top level class Ep to do calculation , if the data structure of Board has changed, then function getChild needs rewrite*/
+
 Node::Node(Board &b,Distribution &d,const char c,const double g,const double v){
 	board = b;
 	dis = d;
@@ -15,9 +17,14 @@ Node::Node(Board &b,Distribution &d,const char c,const double g,const double v){
 	vValue = v;
 	visited= FALSE;
 	color = c;
-
+	parent = NULL;
 }
 
+Node::~Node(){
+ 	delete parent;
+	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++)
+		delete (*it);
+}
 
 double Node::getG() const{
 	return gValue;
@@ -29,64 +36,55 @@ void Node::setVisited(){
 
 }
 void Node::sampleG() {
-	gValue = dis.getSample();
+	if(this->parent == NULL)
+		gValue = dis.getSample();
+	else
+		gValue = this->parent->dis.getSample();
 }
 
 double Node::getV() const{
 	return vValue;
 }
 
-Node * Node::getChild(){
+Node * Node::getChild()  {
 	/*generate children*/
 	if(children.empty()){
-		vector<Piece*> pieces=board.getPieces();
-		for(vector<Piece*>::iterator it=pieces.begin();it<pieces.end();it++){
-			if((*it)->getColor() != this->color)
-				continue;
-
-			vector<Coordinate> moves  =  (*it)->legalMoves(board);
-			for(vector<Coordinate>::iterator iit=moves.begin();iit<moves.end();iit++){
-				Board boardBackup = board;
-				if(boardBackup.makeMove((*it)->getPosition(),(*iit)) && !ComputerPlayer(this->color).amICheckmated(boardBackup)){
-					Distribution prior(gValue,1);
-					Node * cc = new Node(boardBackup,prior,this->color == BLACK ? BLACK : WHITE);
-					cc->setParent(this);
-					children.push_back(cc);
-
-
-				}
-			}
+		vector<Board*>	states = this->board.nextBoardStates(this->color);
+		for(vector<Board*>::iterator it=states.begin();it<states.end();it++){
+			Distribution prior(0,0);
+			Node * cc = new Node((**it),prior,this->color == BLACK ? BLACK : WHITE);
+			cc->setParent(this);
+			children.push_back(cc);
+			delete (*it);
 
 		}
-	
+
 	}
 
-	Node * child = children.back();
-	std::cout << children.size() << std::endl;
-	children.pop_back();
-	return child;
+	
+	return children.back();
 }
 
 void Node::setDistribution(const Distribution &dis){
 	this->dis = dis;
 }
 
-Distribution Node::getDistribution(){
+Distribution &Node::getDistribution() {
 	return this->dis;
 }
 
-Distribution Node::getMessageFromParent(){
+Distribution &Node::getMessageFromParent() {
 	return messageFromParent;
 }
-Distribution Node::getMessageToParent(){
+Distribution &Node::getMessageToParent() {
 
 	return messageToParent;
 }
-Distribution Node::getRollOut(){
+Distribution &Node::getRollOut() {
 	return rollOut;
 }
 
-Node * Node::getParent(){
+Node * Node::getParent() {
 	return parent;
 }
 

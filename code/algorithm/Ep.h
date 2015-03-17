@@ -9,5 +9,5 @@ class Ep{
 		static void updateMessageExceptRollOut(Node &child,Node &parent);
 		static Distribution descent(Node &n);
 		
-		Distribution getMessageFromRollOut(const Node &b,const int len,const int result);
+		static Distribution getMessageFromRollOut(Node &b,const int len,const int result);
 };

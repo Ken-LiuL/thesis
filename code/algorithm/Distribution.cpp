@@ -2,6 +2,8 @@
 #include <random>
 #include <cmath>
 #include <iostream>
+#include <vector>
+
 
 /*low level class, deal with specific distribution calculation , provide some primitive function to do distribution sampling and distribution mulplication*/
 Distribution::Distribution(const double m,const double v){
@@ -80,9 +82,67 @@ double Distribution::phi(double x){
 
 }
 
+Distribution Distribution::getMax(Distribution &one,Distribution &two,double p){
+	double var1 = one.getVar();
+	double mean1 = one.getMean();
+	double deviation1 = sqrt(var1);
+	
+	double var2 = two.getVar();
+	double mean2 = two.getMean();
+	double deviation2 = sqrt(var2);
+	
+	double a = sqrt(var1+var2-2*p*deviation1*deviation2);
+	double k = (mean1-mean2)/a;
+
+	double phiK = Distribution(0,1).phi(k);
+	double phiNegativeK = Distribution(0,1).phi(-k);
+	
+	double pdfK = Distribution(0,1).pdf(k);
+	double pdfNegativeK = Distribution(0,1).pdf(k);
+
+        double mean = phiK*(mean1+
+                           (deviation1*(deviation1-p*deviation2)*pdfK)/(a*phiK)
+                           )
+		      + 
+                      phiNegativeK*(mean2+
+                          (deviation2*(deviation2-p*deviation1)*pdfNegativeK)/(a*phiNegativeK)
+                                  );
+	
+	double var = phiK*((pow(mean1,2)+var1)+
+			     ((2*mean1*deviation1*(deviation1-p*deviation2)/a)
+                               -(k*var1*pow((deviation1-p*deviation2),2)/pow(a,2)))
+                             *(pdfK/phiK)) 
+                     + 
+                     phiNegativeK*((pow(mean2,2)+var2)+
+                              ((2*mean2*deviation2*(deviation2-p*deviation1)/a)
+                                +k*var2*pow((deviation2-p*deviation1),2)/pow(a,2))
+                                *(pdfNegativeK/phiNegativeK));
+ 		     -
+		     pow(mean,2);
+
+	return Distribution(mean,var);
+}
+	
+Distribution Distribution::getMaxOfIndependentSet(std::vector<Distribution> &variables){
+	Distribution intermedia = variables[0];
+	for(std::vector<Distribution>::iterator it=variables.begin()+1;it<variables.end();it++){
+		intermedia = Distribution::getMax(intermedia,(*it));
+	}
+
+	return intermedia;
+
+}
+
+Distribution Distribution::getMaxOfCorrelatedSet(std::vector<Distribution> &variables){
+	 	
+	return Distribution(0,0);
+
+}
+
+
 double Distribution::getSample(){
 	std::random_device gen;
-    	std::normal_distribution<double> normal(mean, sqrt(var));
+    	std::normal_distribution<double> normal(this->mean, sqrt(this->var));
     	return normal(gen);
 }
 double Distribution::getMean() const{

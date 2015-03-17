@@ -28,7 +28,7 @@ Distribution Ep::descent(Node &n){
 	        int length = 3;
 		int result = 1;
 		/*call function to calculated the approximate message*/
-		Distribution rollOut = this->getMessageFromRollOut(length,result);	
+		Distribution rollOut = Ep::getMessageFromRollOut(n,length,result);	
 		
 		n.setDistribution(n.getDistribution()*rollOut);
 		n.setVisited();
@@ -37,28 +37,31 @@ Distribution Ep::descent(Node &n){
 }
 
 
-Distribution Ep:getMessageFromRollOut(const Node &boundary,const int length,const int result){
-	Distribution prior = Distribution(boundary.getMean(),boundary.getVar()+length);
+Distribution Ep::getMessageFromRollOut(Node &boundary,const int length,const int result){
+	Distribution prior = Distribution(boundary.getDistribution().getMean(),boundary.getDistribution().getVar()+length);
+	double priorMean = prior.getMean();
+	double priorVar = prior.getVar();
+
 	double m,v,n,d,p,secondMoment;
-	double meanSqaure = pow(this->mean,2);
+	double meanSqaure = pow(priorMean,2);
 	if(result>0){
 		/*first moment*/
-		n = Distribution(0,this->var).pdf(this->mean);
-		d = 1- this->phi(0);
+		n = Distribution(0,priorVar).pdf(priorMean);
+		d = 1- prior.phi(0);
 		/*seconde moment*/
-		p = (1-(-this->mean*n)/d);
+		p = (1-(-priorMean*n)/d);
 		
 	}
 	else{
 		/*first moment*/
-		n = -(Distribution(0,this->var).pdf(this->mean));
-		d =  this->phi(0);
+		n = -(Distribution(0,priorVar).pdf(priorMean));
+		d =  prior.phi(0);
 		/*second moment*/
-		p  = (1-(this->mean*(-n)/d));
+		p  = (1-(priorMean*(-n)/d));
 
 		}
-	m = this->mean + this->var*(n/d);
-	secondMoment =  meanSqaure+ this->var*p;
+	m = priorMean + priorVar*(n/d);
+	secondMoment =  meanSqaure+ priorVar*p;
 	/*variance*/
 	v = secondMoment - pow(m,2);
 	

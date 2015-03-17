@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 class Distribution{
 	private:
 		double mean;
@@ -10,6 +11,9 @@ class Distribution{
 		Distribution operator*(const Distribution &dis);
 		Distribution operator/(const Distribution &dis); 
 		double getSample();
+		static Distribution getMax(Distribution &one,Distribution &Two,double p=0.0);
+		static Distribution getMaxOfCorrelatedSet(std::vector<Distribution> &variableSet);
+		static Distribution getMaxOfIndependentSet(std::vector<Distribution> &variableSet);
 		double phi(double x);
 		double pdf(double x);
 };

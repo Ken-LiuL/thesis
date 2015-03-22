@@ -32,7 +32,7 @@ void HumanPlayer::play(Board &board){
 	to[1] = c;
 	
 	Board boardBackup = board;
-	if((board.getPiece(from)->getColor()==this->color) && boardBackup.makeMove(from,to) && !HumanPlayer::amICheckmated(boardBackup,this->color))
+	if((board.getPiece(from)->getColor()==this->color) && boardBackup.makeMove(from,to) && !boardBackup.amICheckmated(this->color))
 		board.makeMove(from,to);
 	else
 		cout << "error message " << endl;

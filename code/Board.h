@@ -14,11 +14,11 @@ class Board{
 		Board();
 		~Board();
 		Board &operator=(Board &board);
-		void record(int *from,int*to);
 		void initialize();
 		void freshBoard();
 		void display();
 		void doPromotion(Piece * p);
+		bool amICheckmated(char color);
 		bool occupied(const Coordinate position) const;
 		void increaseSteps();
 		void capture(const Coordinate from, const  Coordinate to);

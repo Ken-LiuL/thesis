@@ -62,7 +62,7 @@ void ComputerPlayer::randomPlay(Board &board){
 			i = rand() % moves.size();/*generate random move*/
 			pieces.at(j)->getPosition();
 			bool t = boardBackup.makeMove((pieces.at(j))->getPosition(),moves.at(i));
-			if( t && (!ComputerPlayer::amICheckmated(boardBackup,this->color))){
+			if( t && (!boardBackup.amICheckmated(this->color))){
 				board.makeMove((pieces.at(j))->getPosition(),moves.at(i));
 				findMove = TRUE;
 				break;

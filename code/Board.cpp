@@ -60,20 +60,6 @@ Board::Board(Board &b){
 	}
 
 }
-
-/*reserved function for debugging*/
-void Board::record(int *from,int *to){
-	char transaction[] = {from[1]+'a','1'+from[0],to[1]+'a',to[0]+'1','\n'};
-	ofstream rec;
-	rec.open("record",ios::app);
-	rec << transaction[0];
-	rec << transaction[1];
-	rec << transaction[2];
-	rec << transaction[3];
-	rec << transaction[4];
-	rec.close();
-}
-
 /*when variable pieces has changed, then call this function to update variable board*/
 void Board::freshBoard(){
 	int i,j;
@@ -201,6 +187,20 @@ void Board::capture(const Coordinate from,const Coordinate to){
 
 }
 
+bool Board::amICheckmated(char color){
+	vector<Piece*> pieces = this->pieces;
+	vector<Coordinate> opponentAttack;
+	Coordinate positionOfKing; 
+	for(int i=0;i<pieces.size();i++){
+		if((pieces.at(i)->getColor()==color) && (pieces.at(i)->getIdentifier() == KING)){
+			positionOfKing = pieces.at(i)->getPosition();
+			break;
+			}
+			
+	}
+	return this->isUnderAttack(positionOfKing,color);
+
+}
 
 /*check whether a positi:on is under attack*/
 bool Board::isUnderAttack(const Coordinate cord,const char color) const{
@@ -257,7 +257,7 @@ vector<Board*> Board::nextBoardStates(char color){
 		for(vector<Coordinate>::iterator iit=moves.begin();iit<moves.end();iit++){
 			Board* boardBackup  = new Board();
 			*boardBackup = (*this);
-			if(boardBackup->makeMove((*it)->getPosition(),(*iit))&& !Player::amICheckmated((*boardBackup),color)){
+			if(boardBackup->makeMove((*it)->getPosition(),(*iit))&& !boardBackup->amICheckmated(color)){
 				states.push_back(boardBackup);
 				}
 		}

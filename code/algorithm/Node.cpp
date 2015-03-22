@@ -1,9 +1,6 @@
 #include "Node.h"
 #include "../Constants.h"
-#include "../piece.h"
 #include "../Board.h"
-#include "../Coordinate.h"
-#include "../ComputerPlayer.h"
 #include <vector>
 #include <iostream>
 using namespace std;

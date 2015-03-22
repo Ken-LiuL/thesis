@@ -33,6 +33,8 @@ Distribution Ep::descent(Node &n){
 		n.setDistribution(n.getDistribution()*rollOut);
 		n.setVisited();
 	}
+	Distribution messageExceptP = n.getDistribution()/n.getMessageFromParent();
+	return Distribution(messageExceptP.getMean(),messageExceptP.getVar()+1);
 
 }
 

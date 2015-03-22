@@ -133,12 +133,21 @@ Distribution Distribution::getMaxOfIndependentSet(std::vector<Distribution> &var
 
 }
 
+/*has not finished implementation*/
 Distribution Distribution::getMaxOfCorrelatedSet(std::vector<Distribution> &variables){
 	 	
 	return Distribution(0,0);
 
 }
 
+/*has not finished implementaton*/
+double Distribution::getP(Distribution &one,Distribution &two){
+	return 0.0;
+}
+
+double Distribution::getP(int i,int j,int deviation[],int k[],std::vector<Distribution> &variables){
+	return 0.0;
+}
 
 double Distribution::getSample(){
 	std::random_device gen;

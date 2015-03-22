@@ -39,7 +39,7 @@ void Node::sampleG() {
 	if(this->parent == NULL)
 		gValue = dis.getSample();
 	else
-		gValue = this->parent->dis.getSample();
+		gValue = Distribution(this->parent->getG(),1).getSample();
 }
 
 double Node::getV() const{
@@ -52,7 +52,7 @@ Node * Node::getChild()  {
 		vector<Board*>	states = this->board.nextBoardStates(this->color);
 		for(vector<Board*>::iterator it=states.begin();it<states.end();it++){
 			Distribution prior(0,0);
-			Node * cc = new Node((**it),prior,this->color == BLACK ? BLACK : WHITE);
+			Node * cc = new Node((**it),prior,this->color == BLACK ? WHITE:BLACK);
 			cc->setParent(this);
 			children.push_back(cc);
 			delete (*it);
@@ -82,6 +82,10 @@ Distribution &Node::getMessageToParent() {
 }
 Distribution &Node::getRollOut() {
 	return rollOut;
+}
+
+Distribution &Node::getDelta(){
+	return delta;
 }
 
 Node * Node::getParent() {

@@ -8,6 +8,7 @@ class Node{
 		Distribution dis;
 		double gValue;
 		double vValue;
+                Distribution delta;
 		bool visited;
 		char color;
 		std::vector<Node*> children;
@@ -25,6 +26,8 @@ class Node{
 		Distribution &getMessageFromParent() ;
 		Distribution &getRollOut() ;
 		const Board &getBoard() const;
+		Distribution &getDelta();
+
 		Node * getParent() ;
 		Node * getChild() ;	
 

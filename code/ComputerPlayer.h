@@ -9,5 +9,5 @@ class ComputerPlayer{
 		ComputerPlayer(const char color);
 		char algorithmPlay(Board &b);
 		void setColor(const char color);
-		char getColor();
+		char getColor() const;
 };

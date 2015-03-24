@@ -8,6 +8,7 @@ class Board{
 		Board(const int size);
 		Board(Board &b);
 		Board();
+	
 		void initialize();
 		void display();
 		std::vector<Board*> nextBoardStates(const char color);

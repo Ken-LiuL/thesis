@@ -1,5 +1,6 @@
 #include "ComputerPlayer.h"
 #include "Board.h"
+#include "Constants.h"
 #include <vector>
 #include <random>
 #include <iostream>
@@ -13,6 +14,7 @@ ComputerPlayer::ComputerPlayer(const char color){
 	this->step = 0;
 }
 
+/*random play strategy,select a random move from available moves. If draw,win or lose , return back. And we assume for WHITE player, draw is lose*/
 char  ComputerPlayer::randomPlay(Board &board){
 	std::vector<Board*> states=board.nextBoardStates(this->color);	
 	if(!states.empty()){
@@ -27,16 +29,17 @@ char  ComputerPlayer::randomPlay(Board &board){
 		}
 	}
 	else{
-		return 'O';
+		return BLACK;
 	}
 	for(int i=0;i<states.size();i++){
 		delete states[i];
 	}
 	
-	return ' ';
+	return CONTINUE;
 		
 }
 
+/*player establish a game tree and calculate G value for every node, and then choose its children node with largest G value, which means is more possible to win*/
 char ComputerPlayer::algorithmPlay(Board &b){
 	Distribution prior(0,1);
 	Node root(b,prior,this->color);	
@@ -61,7 +64,7 @@ char ComputerPlayer::algorithmPlay(Board &b){
 
 	}
 	if(bestChild == NULL){
-		return  this->color=='X'?'O':'X';
+		return  this->color==WHITE?BLACK:WHITE;
 	}
 	else{
 		b = bestChild->getBoard();
@@ -69,10 +72,10 @@ char ComputerPlayer::algorithmPlay(Board &b){
 		if(b.checkWin(this->color))
 			return this->color;
 	}
-	return ' ';
+	return CONTINUE;
 }
 
-char ComputerPlayer::getColor(){
+char ComputerPlayer::getColor() const{
 	return color;
 }
 void ComputerPlayer::setColor(const char color){

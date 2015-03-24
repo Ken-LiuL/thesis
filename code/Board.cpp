@@ -5,6 +5,8 @@
 #include <vector>
 using namespace std;
 
+/*size is the length of a side, like 3,4 or 5, but it should be less than 
+ 10.And board is the char array to keep pieces on the board*/ 
 Board::Board(int size){
 	this->size = size;
 	this->initialize();
@@ -14,6 +16,7 @@ Board::Board(){
 	;
 }
 
+/*this copy function is mandatory if algorithm strategy is used*/
 Board::Board(Board &b){
 	size = b.size;
 	for(int i=0;i<size;i++)
@@ -21,6 +24,7 @@ Board::Board(Board &b){
 			board[i][j] = b.board[i][j];
 }
 
+/*show the board*/
 void Board::display(){
 	for(int i=0;i<size;i++){
 		for(int j=0;j<size;j++)
@@ -31,7 +35,7 @@ void Board::display(){
 	cout << endl << endl;
 }
 
-
+/*initialize the board*/
 void Board::initialize(){
 	for(int i=0;i<size;i++)
 		for(int j=0;j<size;j++)
@@ -39,11 +43,12 @@ void Board::initialize(){
 	
 }
 
+/*return all possible next board states.Argument color specify who make moves*/
 std::vector<Board*> Board::nextBoardStates(const char color){
 	std::vector<Board*> states(0);
 	for(int i=0;i<size;i++)
 		for(int j=0;j<size;j++){
-			if(board[i][j]=='_'){
+			if(board[i][j]==EMPTY){
 				Board * s = new Board(size);
 				*s = *this;
 				s->makeMove(i,j,color);
@@ -54,16 +59,17 @@ std::vector<Board*> Board::nextBoardStates(const char color){
 	return states;
 }
 
+/*check whether the player with one specific color wins*/
 bool Board::checkWin(const char color){
 	char c=color;
 	bool win;
 	int i,j;
 	/*vertical*/
 	for(j=0;j<size;j++){
-		win = 1;
+		win = TRUE;
 		for(i=0;i<size;i++){
 			if(board[i][j] != c){	
-				win = 0;
+				win = FALSE;
 				break;
 			}		
 		}
@@ -72,10 +78,10 @@ bool Board::checkWin(const char color){
 	}
 	/*horizontal*/
 	for(i=0;i<size;i++){
-		win = 1;
+		win = TRUE;
 		for(j=0;j<size;j++){
 			if(board[i][j] != c){
-				win =0;
+				win =FALSE;
 				break;
 			}
 			
@@ -86,20 +92,20 @@ bool Board::checkWin(const char color){
 
 
 	/*diagonal*/
-	win = 1;
+	win = TRUE;
 	for(i=0,j=0;i<size;i++,j++){
 		if(board[i][j] != c){
-			win = 0;
+			win = FALSE;
 			break;
 		}
 	}
 	if(win)
 		return win;
 
-	win = 1;
+	win = TRUE;
 	for(i = size-1,j=size-1;i>-1;i--,j--){
 		if(board[i][j]!=c){
-			win = 0;
+			win = FALSE;
 			break;
 		}
 		
@@ -107,10 +113,13 @@ bool Board::checkWin(const char color){
 	return win;
 }
 
+/*add one piece onto the board*/
 void Board::makeMove(const int i,const int j, const char color){
 	board[i][j] = color;
 
 }
+
+
 
 int main(){
 	int times=100;
@@ -127,13 +136,13 @@ int main(){
 		while(1){
 			result = player1.algorithmPlay(start);
 			start.display();
-			if(result != ' '){
+			if(result != CONTINUE){
 				std::cout << result << " win" <<std::endl;
 				break;
 			}
 			result = player2.randomPlay(start);
 			start.display();
-			if(result != ' '){
+			if(result != CONTINUE){
 				std::cout << result << " win" << std::endl;
 				break;
 			}

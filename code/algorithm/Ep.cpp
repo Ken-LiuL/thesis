@@ -1,4 +1,5 @@
 #include "Ep.h"
+#include "../Constants.h"
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
@@ -55,14 +56,14 @@ void Ep::doRollout(Node &n,int &l,int &r){
 	char result;
 	while(1){
 		result = p.randomPlay(b);
-		if(result != ' ')
+		if(result != CONTINUE)
 			break;
-		p.setColor(p.getColor()=='X' ? 'O' : 'X');
+		p.setColor(p.getColor()==WHITE ? BLACK : WHITE);
 	
 		result = p.randomPlay(b);
-		if(result != ' ')
+		if(result != CONTINUE)
 			break;
-		p.setColor(p.getColor()=='X' ? 'O' : 'X');
+		p.setColor(p.getColor()==WHITE ? BLACK : WHITE);
 	}
 	l = p.step;
 	r = result == 'X' ? 1 : -1;

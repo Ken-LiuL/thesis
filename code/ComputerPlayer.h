@@ -4,6 +4,10 @@ class ComputerPlayer{
 	protected:
 		char color;
 	public:
-		void play(Board &b);
+		int step;
+		char randomPlay(Board &b);
 		ComputerPlayer(const char color);
+		char algorithmPlay(Board &b);
+		void setColor(const char color);
+		char getColor();
 };

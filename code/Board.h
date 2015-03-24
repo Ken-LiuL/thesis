@@ -1,11 +1,13 @@
 #pragma once
 #include <vector>
 class Board{
-	protected:
+	public:
 		int size;
 		char board[10][10];
-	public:
+
 		Board(const int size);
+		Board(Board &b);
+		Board();
 		void initialize();
 		void display();
 		std::vector<Board*> nextBoardStates(const char color);

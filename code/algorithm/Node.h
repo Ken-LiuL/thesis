@@ -21,15 +21,17 @@ class Node{
 		~Node();
 		double getG() const;
 		double getV() const;
+		char getColor();
 		Distribution &getDistribution() ;
 		Distribution &getMessageToParent() ;
 		Distribution &getMessageFromParent() ;
 		Distribution &getRollOut() ;
-		const Board &getBoard() const;
+	        Board &getBoard();
 		Distribution &getDelta();
 
 		Node * getParent() ;
 		Node * getChild() ;	
+		std::vector<Node*> getChildren();
 
 		void setDistribution(const Distribution &dis);
 		void setParent(Node * n);

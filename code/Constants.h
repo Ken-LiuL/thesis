@@ -1,8 +1,8 @@
 #pragma once
 #define TRUE 1
 #define FALSE 0
-#define WHITE 'W'
-#define BLACK 'B'
+#define WHITE 'X'
+#define BLACK 'O'
 #define KING 'K'
 #define BISHOP 'B'
 #define ROOK 'R'

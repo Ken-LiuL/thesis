@@ -1,14 +1,25 @@
 #include "Board.h"
 #include "ComputerPlayer.h"
 #include <iostream>
+#include "Constants.h"
 #include <vector>
 using namespace std;
 
 Board::Board(int size){
 	this->size = size;
-
+	this->initialize();
 }
 
+Board::Board(){
+	;
+}
+
+Board::Board(Board &b){
+	size = b.size;
+	for(int i=0;i<size;i++)
+		for(int j=0;j<size;j++)
+			board[i][j] = b.board[i][j];
+}
 
 void Board::display(){
 	for(int i=0;i<size;i++){
@@ -19,6 +30,7 @@ void Board::display(){
 
 	cout << endl << endl;
 }
+
 
 void Board::initialize(){
 	for(int i=0;i<size;i++)
@@ -101,19 +113,34 @@ void Board::makeMove(const int i,const int j, const char color){
 }
 
 int main(){
-	Board start(3);
-	start.initialize();
-	start.display();
+	int times=100;
+	int winTimes =0;
+	while(times-->0){
+		Board start(3);
+		start.display();
 	
-	ComputerPlayer player1('X');
-	ComputerPlayer player2('O');
+		ComputerPlayer player1(WHITE);
+		ComputerPlayer player2(BLACK);
 
-	while(1){
-		player1.play(start);
-		start.display();
-		player2.play(start);
-		start.display();
+		char result;
+	
+		while(1){
+			result = player1.algorithmPlay(start);
+			start.display();
+			if(result != ' '){
+				std::cout << result << " win" <<std::endl;
+				break;
+			}
+			result = player2.randomPlay(start);
+			start.display();
+			if(result != ' '){
+				std::cout << result << " win" << std::endl;
+				break;
+			}
 
+		}
+		if(result == WHITE)
+			winTimes ++;
 	}
-
+	std::cout << winTimes << std::endl;
 }

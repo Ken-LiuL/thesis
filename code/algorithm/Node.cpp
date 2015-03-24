@@ -2,7 +2,10 @@
 #include "../Constants.h"
 #include "../Board.h"
 #include <vector>
+#include <ctime>
+#include <cstdlib>
 #include <iostream>
+#include <random>
 using namespace std;
 
 /*This class provide interface to top level class Ep to do calculation , if the data structure of Board has changed, then function getChild needs rewrite*/
@@ -18,7 +21,6 @@ Node::Node(Board &b,Distribution &d,const char c,const double g,const double v){
 }
 
 Node::~Node(){
- 	delete parent;
 	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++)
 		delete (*it);
 }
@@ -58,8 +60,15 @@ Node * Node::getChild()  {
 
 	}
 
-	
-	return children.back();
+	if(children.empty())
+		return (Node *)NULL;
+	else{
+		std::mt19937 rng;
+                rng.seed(std::random_device()());
+                std::uniform_int_distribution<std::mt19937::result_type> randomChild(0,children.size()-1);
+
+		return children[randomChild(rng)];
+	}
 }
 
 void Node::setDistribution(const Distribution &dis){
@@ -104,8 +113,14 @@ bool Node::isVisited() const{
 	return visited;
 }
 
-const Board &Node::getBoard() const{
+Board &Node::getBoard() {
 	return board;
 }
 
+char Node::getColor(){
+	return color;
+}
 
+std::vector<Node*> Node::getChildren(){
+	return children;
+}

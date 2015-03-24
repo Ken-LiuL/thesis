@@ -10,4 +10,5 @@ class Ep{
 		static Distribution descent(Node &n);
 		
 		static Distribution getMessageFromRollOut(Node &b,const int len,const int result);
+		static void doRollout(Node &b,int &length,int &result);
 };

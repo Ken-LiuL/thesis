@@ -1,5 +1,8 @@
 #include "Ep.h"
 #include <cmath>
+#include <cstdlib>
+#include <iostream>
+#include "../ComputerPlayer.h"
 	
 /*top level class of the core algorithm, it provides interface to Player
   class, they are well modeled, the granity of this class is object Node
@@ -9,13 +12,15 @@
 Distribution Ep::descent(Node &n){
 	if(n.isVisited()){
 		Node* c = n.getChild();
-		c->sampleG();
-		/*update message to c*/
-		Ep::updateMessageFromParent(*c,n);
-		/*continue to descent*/
-		Distribution newMessage = descent(*c);
-		/*update marginal of n*/
-		Ep::updateMessageToParent(*c,n,newMessage);
+		if(c!=NULL){
+			c->sampleG();
+			/*update message to c*/
+			Ep::updateMessageFromParent(*c,n);
+			/*continue to descent*/
+			Distribution newMessage = descent(*c);
+			/*update marginal of n*/
+			Ep::updateMessageToParent(*c,n,newMessage);
+		}
 	}
 
 	else{
@@ -25,8 +30,11 @@ Distribution Ep::descent(Node &n){
 		
 		/*dealing with roll out*/
 		/*assume this is returned by the roll out*/
-	        int length = 3;
-		int result = 1;
+	        
+		int length = 0;
+		int result = 0;
+		Ep::doRollout(n,length,result);
+
 		/*call function to calculated the approximate message*/
 		Distribution rollOut = Ep::getMessageFromRollOut(n,length,result);	
 		
@@ -34,10 +42,31 @@ Distribution Ep::descent(Node &n){
 		n.setVisited();
 	}
 	Distribution messageExceptP = n.getDistribution()/n.getMessageFromParent();
+
 	return Distribution(messageExceptP.getMean(),messageExceptP.getVar()+1);
 
 }
 
+/*change as different board and computer player implementation*/
+void Ep::doRollout(Node &n,int &l,int &r){
+	Board b = n.getBoard();
+	char color = n.getColor();
+	ComputerPlayer p(color);
+	char result;
+	while(1){
+		result = p.randomPlay(b);
+		if(result != ' ')
+			break;
+		p.setColor(p.getColor()=='X' ? 'O' : 'X');
+	
+		result = p.randomPlay(b);
+		if(result != ' ')
+			break;
+		p.setColor(p.getColor()=='X' ? 'O' : 'X');
+	}
+	l = p.step;
+	r = result == 'X' ? 1 : -1;
+}
 
 Distribution Ep::getMessageFromRollOut(Node &boundary,const int length,const int result){
 	Distribution prior = Distribution(boundary.getDistribution().getMean(),boundary.getDistribution().getVar()+length);

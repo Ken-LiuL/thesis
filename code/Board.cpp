@@ -114,7 +114,7 @@ bool Board::checkWin(const char color){
 		return win;
 
 	win = TRUE;
-	for(i = size-1,j=size-1;i>-1;i--,j--){
+	for(i = 0,j=size-1;i<size;i++,j--){
 		if(board[i][j]!=c){
 			win = FALSE;
 			break;

@@ -37,7 +37,7 @@ void Node::setVisited(){
 }
 void Node::sampleG() {
 	if(this->parent == NULL)
-		gValue = dis.getSample();
+		gValue = gDis.getSample();
 	else
 		gValue = Distribution(this->parent->getG(),1).getSample();
 }

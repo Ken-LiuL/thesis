@@ -37,12 +37,14 @@ Distribution Ep::descent(Node &n){
 		char lastPlayer;
 		std::vector<int> stored(0);
 		Ep::doRollout(n,length,result,lastPlayer,stored);
-		/*update V distribution =  delta + V*/
-		Distribution v = Ep::calculateDelata(stored,lastPlayer);
-		n.setVDis(v+n.getGDis());
+		
 		/*call function to calculated the approximate message*/
 		Distribution rollOut = Ep::getMessageFromRollOut(n,length,result);	
 		n.setGDis(n.getGDis()*rollOut);
+		/*update V distribution =  delta + V*/
+		Distribution v = Ep::calculateDelta(stored,lastPlayer);
+		n.setVDis(v+n.getGDis());
+
 		n.setVisited();
 	}
 	Distribution messageExceptP = n.getGDis()/n.getMessageFromParent();
@@ -80,13 +82,12 @@ Distribution Ep::calculateDelta(std::vector<int> &branch,char lastPlayer){
 	if(branch.size()==0)
 		return Distribution(0,0);
 
-	Distribution delta(0,1);
-	for(std::vector<int>::iterator it = branch.end();it>=branch.begin();it--){
+	Distribution delta(0,0);
+	for(std::vector<int>::iterator it = branch.end()-1;it>=branch.begin();it--){
 		int branchFactor = (*it);
-		std::vector<Distribution> variables(branchFactor);
+		std::vector<Distribution> variables(0);
 		for(int i=0;i<branchFactor;i++){
-			Distribution d  = delta
-			variables.push_back(d);
+			variables.push_back(delta+Distribution(0,1));
 
 		}
 		if(lastPlayer == MAX){

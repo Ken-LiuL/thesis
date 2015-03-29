@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+class Node;
 class Distribution{
 	private:
 		double mean;
@@ -10,14 +11,18 @@ class Distribution{
 		double getVar() const;
 		Distribution operator*(const Distribution &dis);
 		Distribution operator/(const Distribution &dis); 
+		Distribution operator+(const Distribution &dis);
+		Distribution operator-(const Distribution &dis);
+		bool  operator==(const Distribution &dis);
 		double getSample();
 		static Distribution getMin(Distribution &one,Distribution &two,double p=0.0);
 		static Distribution getMax(Distribution &one,Distribution &Two,double p=0.0);
-		static Distribution getMaxOfCorrelatedSet(std::vector<Distribution> &variableSet);
+		static Distribution getMaxOfCorrelatedSet(std::vector<Node*> &variableSet);
 		static Distribution getMaxOfIndependentSet(std::vector<Distribution> &variableSet);
-		static double getP(int i,Node &n);
-		static double getP(int i,int j,int &deviation[],int &k[],std::vector<Node*> &variables);
+		static double getP(Node &one,Node &two);
+		static double getP(int i,int j,double deviation[],double k[],std::vector<Node*> &variables);
 		static Distribution getMinOfIndependentSet(std::vector<Distribution> &variableSet);
+		static Distribution getMinOfCorrelatedSet(std::vector<Node*>&variableSet);
 		double phi(double x);
 		double pdf(double x);
 };

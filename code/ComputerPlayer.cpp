@@ -54,8 +54,8 @@ char ComputerPlayer::algorithmPlay(Board &b){
 	double largestG = -1000;
 	Node * bestChild=NULL;
 	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++){
-		double g = (*it)->getDistribution().getSample();
-		if((*it)->getDistribution().getVar()==0)
+		double g = (*it)->getGDis().getSample();
+		if((*it)->getGDis().getVar()==0)
 			exit(-1);
 		if(g > largestG){
 			bestChild = (*it);	

@@ -5,3 +5,5 @@
 #define BLACK 'O'
 #define EMPTY '_'
 #define CONTINUE ' '
+#define MAX 'X'
+#define MIN 'O'

@@ -59,6 +59,17 @@ std::vector<Board*> Board::nextBoardStates(const char color){
 	return states;
 }
 
+int Board::numberOfNextBoardStates(const char color){
+	int counter=0;
+	for(int i=0;i<size;i++){
+		for(int j=0;j<size;j++){
+			if(board[i][j] == EMPTY){
+				counter++;	
+			}
+		}
+	}
+	return counter;
+}
 /*check whether the player with one specific color wins*/
 bool Board::checkWin(const char color){
 	char c=color;

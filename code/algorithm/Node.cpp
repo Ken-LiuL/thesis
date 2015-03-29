@@ -12,12 +12,13 @@ using namespace std;
 
 Node::Node(Board &b,Distribution &d,const char c,const double g,const double v){
 	board = b;
-	dis = d;
+	gDis = d;
 	gValue = g;
 	vValue = v;
 	visited= FALSE;
 	color = c;
 	parent = NULL;
+	
 }
 
 Node::~Node(){
@@ -71,12 +72,12 @@ Node * Node::getChild()  {
 	}
 }
 
-void Node::setDistribution(const Distribution &dis){
-	this->dis = dis;
+void Node::setGDis(const Distribution &dis){
+	gDis = dis;
 }
 
-Distribution &Node::getDistribution() {
-	return this->dis;
+void Node::setVDis(const Distribution &dis){
+	vDis = dis;
 }
 
 Distribution &Node::getMessageFromParent() {
@@ -89,9 +90,11 @@ Distribution &Node::getMessageToParent() {
 Distribution &Node::getRollOut() {
 	return rollOut;
 }
-
-Distribution &Node::getDelta(){
-	return delta;
+Distribution &Node::getGDis(){
+	return gDis;
+}
+Distribution &Node::getVDis(){
+	return vDis;
 }
 
 Node * Node::getParent() {

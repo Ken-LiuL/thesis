@@ -5,10 +5,10 @@
 class Node{
 	protected:
 		Board board;
-		Distribution dis;
+		Distribution gDis;
 		double gValue;
 		double vValue;
-                Distribution delta;
+                Distribution vDis;
 		bool visited;
 		char color;
 		std::vector<Node*> children;
@@ -22,23 +22,24 @@ class Node{
 		double getG() const;
 		double getV() const;
 		char getColor();
-		Distribution &getDistribution() ;
+		Distribution &getGDis() ;
+		Distribution &getVDis() ;
+
 		Distribution &getMessageToParent() ;
 		Distribution &getMessageFromParent() ;
 		Distribution &getRollOut() ;
 	        Board &getBoard();
-		Distribution &getDelta();
 
 		Node * getParent() ;
 		Node * getChild() ;	
 		std::vector<Node*> getChildren();
 
-		void setDistribution(const Distribution &dis);
 		void setParent(Node * n);
 		void setMessageToParent(const Distribution &dis);
 		void setMessageFromParent(const Distribution &dis);
 		void setVisited();
-
+		void setGDis(const Distribution &dis);
+		void setVDis(const Distribution &dis);
 		bool isVisited() const;
 		void sampleG();
 	;	

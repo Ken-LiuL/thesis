@@ -10,5 +10,6 @@ class Ep{
 		static Distribution descent(Node &n);
 		
 		static Distribution getMessageFromRollOut(Node &b,const int len,const int result);
-		static void doRollout(Node &b,int &length,int &result);
+		static void doRollout(Node &b,int &length,int &result,char &lastPlayer,std::vector<int> &stored);
+		static Distribution calculateDelta(std::vector<int> &branch,char lastPlayer);
 };

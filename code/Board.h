@@ -14,4 +14,5 @@ class Board{
 		std::vector<Board*> nextBoardStates(const char color);
 		void makeMove(const int i,const int j,const char color);
 		bool checkWin(const char color);
+		int numberOfNextBoardStates(const char color);
 };

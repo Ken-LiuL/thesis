@@ -34,43 +34,99 @@ Distribution Ep::descent(Node &n){
 	        
 		int length = 0;
 		int result = 0;
-		Ep::doRollout(n,length,result);
-
+		char lastPlayer;
+		std::vector<int> stored(0);
+		Ep::doRollout(n,length,result,lastPlayer,stored);
+		/*update V distribution =  delta + V*/
+		Distribution v = Ep::calculateDelata(stored,lastPlayer);
+		n.setVDis(v+n.getGDis());
 		/*call function to calculated the approximate message*/
 		Distribution rollOut = Ep::getMessageFromRollOut(n,length,result);	
-		
-		n.setDistribution(n.getDistribution()*rollOut);
+		n.setGDis(n.getGDis()*rollOut);
 		n.setVisited();
 	}
-	Distribution messageExceptP = n.getDistribution()/n.getMessageFromParent();
+	Distribution messageExceptP = n.getGDis()/n.getMessageFromParent();
+	Ep::updateParentVDistribution(n);
 
 	return Distribution(messageExceptP.getMean(),messageExceptP.getVar()+1);
 
 }
 
 /*change as different board and computer player implementation*/
-void Ep::doRollout(Node &n,int &l,int &r){
+void Ep::doRollout(Node &n,int &l,int &r,char &lastPlayer,std::vector<int> &stored){
 	Board b = n.getBoard();
 	char color = n.getColor();
 	ComputerPlayer p(color);
+	int num = 0;
 	char result;
 	while(1){
-		result = p.randomPlay(b);
-		if(result != CONTINUE)
+		 num = b.numberOfNextBoardStates(p.getColor());
+		if(num==0){
+			p.setColor(p.getColor()==WHITE ? BLACK : WHITE);
 			break;
-		p.setColor(p.getColor()==WHITE ? BLACK : WHITE);
-	
+		}
+		stored.push_back(num);
 		result = p.randomPlay(b);
 		if(result != CONTINUE)
 			break;
 		p.setColor(p.getColor()==WHITE ? BLACK : WHITE);
 	}
-	l = p.step;
+	l = p.step; 
+	lastPlayer =  p.getColor();
 	r = result == 'X' ? 1 : -1;
 }
 
+Distribution Ep::calculateDelta(std::vector<int> &branch,char lastPlayer){
+	if(branch.size()==0)
+		return Distribution(0,0);
+
+	Distribution delta(0,1);
+	for(std::vector<int>::iterator it = branch.end();it>=branch.begin();it--){
+		int branchFactor = (*it);
+		std::vector<Distribution> variables(branchFactor);
+		for(int i=0;i<branchFactor;i++){
+			Distribution d  = delta
+			variables.push_back(d);
+
+		}
+		if(lastPlayer == MAX){
+			delta =  Distribution::getMaxOfIndependentSet(variables);
+			lastPlayer = MIN;
+		}
+		else{
+			delta =  Distribution::getMinOfIndependentSet(variables);
+			lastPlayer = MAX;
+		}
+	}
+	return delta;
+}
+
+void Ep::updateParentVDistribution(Node &n){
+	Node *parent = n.getParent();
+	if(parent==NULL)
+		return;
+	
+	std::vector<Node*> variables(0);
+	std::vector<Node*> children = parent->getChildren();
+	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++){
+		if((*it)->getVDis()==Distribution(0,0)){
+			continue;
+		}
+		else{
+			variables.push_back((*it));
+		}
+	}
+	Distribution newV;
+	if(parent->getColor()==MAX)
+		newV = Distribution::getMaxOfCorrelatedSet(variables);
+	else
+		newV = Distribution::getMinOfCorrelatedSet(variables);
+	
+	parent->setVDis(newV);
+}
+
 Distribution Ep::getMessageFromRollOut(Node &boundary,const int length,const int result){
-	Distribution prior = Distribution(boundary.getDistribution().getMean(),boundary.getDistribution().getVar()+length);
+	Distribution prior = Distribution(boundary.getGDis().getMean(),boundary.getGDis().getVar()+length);
 	double priorMean = prior.getMean();
 	double priorVar = prior.getVar();
 
@@ -101,25 +157,25 @@ Distribution Ep::getMessageFromRollOut(Node &boundary,const int length,const int
 }
 
 void Ep::updateMessageFromParent(Node &child,Node &parent){
-	child.setDistribution(child.getDistribution()/child.getMessageFromParent());
-	Distribution messageExceptC = parent.getDistribution()/child.getMessageToParent();
+	child.setGDis(child.getGDis()/child.getMessageFromParent());
+	Distribution messageExceptC = parent.getGDis()/child.getMessageToParent();
 	Distribution messageIntegral = Distribution(messageExceptC.getMean(),messageExceptC.getVar()+1);
 	child.setMessageFromParent(messageIntegral);
-	child.setDistribution(child.getDistribution()*child.getMessageFromParent());
+	child.setGDis(child.getGDis()*child.getMessageFromParent());
 }
 
 void Ep::updateMessageExceptRollOut(Node &child,Node &parent){
-	Distribution newParent = parent.getDistribution()/parent.getRollOut();
-	child.setDistribution(child.getDistribution()/child.getMessageFromParent());
+	Distribution newParent = parent.getGDis()/parent.getRollOut();
+	child.setGDis(child.getGDis()/child.getMessageFromParent());
 	Distribution messageExceptC = newParent/child.getMessageToParent();
 	Distribution messageIntegral = Distribution(messageExceptC.getMean(),messageExceptC.getVar()+1);
-	child.setDistribution(child.getDistribution()*messageIntegral);
+	child.setGDis(child.getGDis()*messageIntegral);
 	child.setMessageFromParent(messageIntegral);
 }
 
 void Ep::updateMessageToParent(Node &child,Node &parent,Distribution &message){
 	
-	parent.setDistribution(parent.getDistribution()/child.getMessageToParent()*message);
+	parent.setGDis(parent.getGDis()/child.getMessageToParent()*message);
 	child.setMessageToParent(message);
 
 }

@@ -44,7 +44,6 @@ Distribution Ep::descent(Node &n){
 		/*update V distribution =  delta + V*/
 		Distribution v = Ep::calculateDelta(stored,lastPlayer);
 		n.setVDis(v+n.getGDis());
-
 		n.setVisited();
 	}
 	Distribution messageExceptP = n.getGDis()/n.getMessageFromParent();
@@ -118,11 +117,14 @@ void Ep::updateParentVDistribution(Node &n){
 		}
 	}
 	Distribution newV;
+	std::vector<Distribution> tt(0);
+	for(std::vector<Node*>::iterator it=variables.begin();it<variables.end();it++)
+		tt.push_back((**it).getVDis());
 	if(parent->getColor()==MAX)
-		newV = Distribution::getMaxOfCorrelatedSet(variables);
+		newV = Distribution::getMaxOfIndependentSet(tt);
 	else
-		newV = Distribution::getMinOfCorrelatedSet(variables);
-	
+		newV = Distribution::getMinOfIndependentSet(tt);
+
 	parent->setVDis(newV);
 }
 

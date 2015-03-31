@@ -133,7 +133,7 @@ void Board::makeMove(const int i,const int j, const char color){
 
 
 int main(){
-	int times=20;
+	int times=100;
 	int winTimes =0;
 	while(times-->0){
 		Board start(3);

@@ -55,9 +55,6 @@ char ComputerPlayer::algorithmPlay(Board &b){
 	Node * bestChild=NULL;
 	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++){
 		double g = (*it)->getVDis().getSample();
-		Distribution hh = (*it)->getVDis();
-		std::cout << hh.getMean()<<","
-			 << hh.getVar()  << std::endl;
 		if((*it)->getVDis().getVar()==0)
 			exit(-1);
 		if(g > largestG){

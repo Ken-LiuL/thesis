@@ -8,6 +8,7 @@ class Node{
 		Distribution gDis;
 		double gValue;
 		double vValue;
+		Distribution delta;
                 Distribution vDis;
 		bool visited;
 		char color;
@@ -24,6 +25,7 @@ class Node{
 		char getColor();
 		Distribution &getGDis() ;
 		Distribution &getVDis() ;
+		Distribution &getDelta();
 
 		Distribution &getMessageToParent() ;
 		Distribution &getMessageFromParent() ;
@@ -38,6 +40,7 @@ class Node{
 		void setMessageToParent(const Distribution &dis);
 		void setMessageFromParent(const Distribution &dis);
 		void setVisited();
+		void setDelta(const Distribution &dis);
 		void setGDis(const Distribution &dis);
 		void setVDis(const Distribution &dis);
 		bool isVisited() const;

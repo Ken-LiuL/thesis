@@ -51,15 +51,16 @@ char ComputerPlayer::algorithmPlay(Board &b){
 		Ep::descent(root);
 	}
 	std::vector<Node*>  children = root.getChildren();
-	double largestG = -1000;
+
+	double largestV = -1000;
 	Node * bestChild=NULL;
 	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++){
-		double g = (*it)->getVDis().getSample();
+		double v = (*it)->getVDis().getSample();
 		if((*it)->getVDis().getVar()==0)
 			exit(-1);
-		if(g > largestG){
+		if(v > largestV){
 			bestChild = (*it);	
-			largestG = g;
+			largestV = v;
 		}	
 
 	}

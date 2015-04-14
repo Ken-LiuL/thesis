@@ -43,6 +43,7 @@ Distribution Ep::descent(Node &n){
 		n.setGDis(n.getGDis()*rollOut);
 		/*update V distribution =  delta + V*/
 		Distribution v = Ep::calculateDelta(stored,lastPlayer);
+		n.setDelta(v);
 		n.setVDis(v+n.getGDis());
 		n.setVisited();
 	}
@@ -106,24 +107,37 @@ void Ep::updateParentVDistribution(Node &n){
 	if(parent==NULL)
 		return;
 	
-	std::vector<Node*> variables(0);
 	std::vector<Node*> children = parent->getChildren();
+
+        //temporarily use average delta to approximate the real delta
+	Distribution deltas;
+	int counter=0;
 	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++){
-		if((*it)->getVDis()==Distribution(0,0)){
+		if((*it)->getDelta()==Distribution(0,0)){
 			continue;
 		}
 		else{
-			variables.push_back((*it));
+			deltas = deltas+(*it)->getDelta();
+			counter++;
 		}
 	}
+	//approximate V-Dis as G-Parent+averageDelta
+	Distribution averageDelta(deltas.getMean()/counter,deltas.getVar()/counter);
+	
+	std::vector<Node*> variables(0);
+	for(std::vector<Node*>::iterator it= children.begin();it<children.end();it++){
+		if((*it)->getVDis()==Distribution(0,0))
+			continue;
+		else
+			variables.push_back((*it));
+
+         }
+
 	Distribution newV;
-	std::vector<Distribution> tt(0);
-	for(std::vector<Node*>::iterator it=variables.begin();it<variables.end();it++)
-		tt.push_back((**it).getVDis());
 	if(parent->getColor()==MAX)
-		newV = Distribution::getMaxOfIndependentSet(tt);
+		newV = Distribution::getMaxOfCorrelatedSet(variables);
 	else
-		newV = Distribution::getMinOfIndependentSet(tt);
+		newV = Distribution::getMinOfCorrelatedSet(variables);
 
 	parent->setVDis(newV);
 }

@@ -76,6 +76,10 @@ void Node::setGDis(const Distribution &dis){
 	gDis = dis;
 }
 
+void Node::setDelta(const Distribution &dis){
+	delta = dis;
+}
+
 void Node::setVDis(const Distribution &dis){
 	vDis = dis;
 }
@@ -95,6 +99,10 @@ Distribution &Node::getGDis(){
 }
 Distribution &Node::getVDis(){
 	return vDis;
+}
+
+Distribution &Node::getDelta(){
+	return delta;
 }
 
 Node * Node::getParent() {

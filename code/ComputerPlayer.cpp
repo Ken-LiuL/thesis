@@ -17,6 +17,7 @@ ComputerPlayer::ComputerPlayer(const char color){
 /*random play strategy,select a random move from available moves. If draw,win or lose , return back. And we assume for WHITE player, draw is lose*/
 char  ComputerPlayer::randomPlay(Board &board){
 	std::vector<Board*> states=board.nextBoardStates(this->color);	
+	char returnValue;
 	if(!states.empty()){
 		std::mt19937 rng;
     		rng.seed(std::random_device()());
@@ -25,27 +26,28 @@ char  ComputerPlayer::randomPlay(Board &board){
 		board = *states[move];
 		this->step +=1 ;
 		if(board.checkWin(this->color)){
-			return this->color;
+			returnValue =  this->color;
 		}
 	}
 	else{
-		return BLACK;
+		returnValue = BLACK;
 	}
+	returnValue = CONTINUE;
 	for(int i=0;i<states.size();i++){
 		delete states[i];
 	}
 	
-	return CONTINUE;
+	return returnValue;
 		
 }
 
 /*player establish a game tree and calculate G value for every node, and then choose its children node with largest G value, which means is more possible to win*/
-char ComputerPlayer::algorithmPlay(Board &b){
+char ComputerPlayer::algorithmPlay(Board &b,int paramter){
 	Distribution prior(0,1);
 	Node root(b,prior,this->color);	
 	root.setVisited();
 	root.sampleG();
-	int i = 10000;
+	int i = paramter;
 	while(i-->0){
 		
 		Ep::descent(root);
@@ -55,9 +57,9 @@ char ComputerPlayer::algorithmPlay(Board &b){
 	double largestV = -1000;
 	Node * bestChild=NULL;
 	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++){
-		double v = (*it)->getVDis().getSample();
-		if((*it)->getVDis().getVar()==0)
-			exit(-1);
+		double v = (*it)->getGDis().getSample();
+		if((*it)->getGDis().getVar()==0)
+			continue;
 		if(v > largestV){
 			bestChild = (*it);	
 			largestV = v;

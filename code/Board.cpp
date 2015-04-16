@@ -133,11 +133,15 @@ void Board::makeMove(const int i,const int j, const char color){
 
 
 int main(){
+	int control_parameter=1000;
+
+	while(control_parameter<=10000){
 	int times=100;
 	int winTimes =0;
+
 	while(times-->0){
 		Board start(3);
-		start.display();
+		//start.display();
 	
 		ComputerPlayer player1(WHITE);
 		ComputerPlayer player2(BLACK);
@@ -145,22 +149,23 @@ int main(){
 		char result;
 	
 		while(1){
-			result = player1.algorithmPlay(start);
-			start.display();
+			result = player1.algorithmPlay(start,control_parameter);
 			if(result != CONTINUE){
-				std::cout << result << " win" <<std::endl;
+			//	std::cout << result << " win" <<std::endl;
 				break;
 			}
 			result = player2.randomPlay(start);
-			start.display();
+		//	start.display();
 			if(result != CONTINUE){
-				std::cout << result << " win" << std::endl;
-				break;
+			//	std::cout << result << " win" << std::endl;
+				;
 			}
 
 		}
 		if(result == WHITE)
 			winTimes ++;
 	}
-	std::cout << winTimes << std::endl;
+	std::cout << winTimes << " " << control_parameter<<std::endl;
+	control_parameter = control_parameter+1000;
+	}
 }

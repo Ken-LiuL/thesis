@@ -40,12 +40,7 @@ Distribution Ep::descent(Node &n){
 		
 		/*call function to calculated the approximate message*/
 		Distribution rollOut = Ep::getMessageFromRollOut(n,length,result);	
-		if(length==0){
-			n.setGDis(rollOut);
-		}
-		else{
-			n.setGDis(n.getGDis()*rollOut);
-		}
+		n.setGDis(n.getGDis()*rollOut);
 		/*update V distribution =  delta + V*/
 		Distribution v = Ep::calculateDelta(stored,lastPlayer);
 		n.setDelta(v);
@@ -135,20 +130,17 @@ void Ep::updateParentVDistribution(Node &n){
 	//approximate V-Dis as G-Parent+averageDelta
 	Distribution averageDelta(deltas.getMean()/counter,deltas.getVar()/counter);
 	
-	std::vector<Node*> variables(0);
 	for(std::vector<Node*>::iterator it= children.begin();it<children.end();it++){
 		if((*it)->getVDis()==Distribution(0,0))
-			continue;
-		else
-			variables.push_back((*it));
+			(*it)->setDelta(averageDelta);		
 
          }
 
 	Distribution newV;
 	if(parent->getColor()==MAX)
-		newV = Distribution::getMaxOfCorrelatedSet(variables);
+		newV = Distribution::getMaxOfCorrelatedSet(children);
 	else
-		newV = Distribution::getMinOfCorrelatedSet(variables);
+		newV = Distribution::getMinOfCorrelatedSet(children);
 
 	parent->setVDis(newV);
 }

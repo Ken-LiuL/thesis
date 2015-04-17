@@ -136,7 +136,7 @@ int main(){
 	int times=100;
 	int winTimes =0;
 	while(times-->0){
-		Board start(3);
+		Board start(10);
 		start.display();
 	
 		ComputerPlayer player1(WHITE);

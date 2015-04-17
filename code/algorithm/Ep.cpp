@@ -40,7 +40,12 @@ Distribution Ep::descent(Node &n){
 		
 		/*call function to calculated the approximate message*/
 		Distribution rollOut = Ep::getMessageFromRollOut(n,length,result);	
-		n.setGDis(n.getGDis()*rollOut);
+		if(length==0){
+			n.setGDis(rollOut);
+		}
+		else{
+			n.setGDis(n.getGDis()*rollOut);
+		}
 		/*update V distribution =  delta + V*/
 		Distribution v = Ep::calculateDelta(stored,lastPlayer);
 		n.setDelta(v);
@@ -61,10 +66,15 @@ void Ep::doRollout(Node &n,int &l,int &r,char &lastPlayer,std::vector<int> &stor
 	ComputerPlayer p(color);
 	int num = 0;
 	char result;
+	if(b.checkWin(p.getColor()==WHITE ? BLACK : WHITE)){
+		result = p.getColor()==WHITE ? BLACK : WHITE;
+	}
+	else{
 	while(1){
 		 num = b.numberOfNextBoardStates(p.getColor());
 		if(num==0){
 			p.setColor(p.getColor()==WHITE ? BLACK : WHITE);
+			result=BLACK;
 			break;
 		}
 		stored.push_back(num);
@@ -72,6 +82,7 @@ void Ep::doRollout(Node &n,int &l,int &r,char &lastPlayer,std::vector<int> &stor
 		if(result != CONTINUE)
 			break;
 		p.setColor(p.getColor()==WHITE ? BLACK : WHITE);
+	}
 	}
 	l = p.step; 
 	lastPlayer =  p.getColor();

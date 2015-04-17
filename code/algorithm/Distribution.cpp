@@ -126,7 +126,13 @@ Distribution Distribution::getMin(Distribution &one,Distribution &two,double p){
 	double mean2 = two.getMean();
 	double deviation2 = sqrt(var2);
 	double a = sqrt(var1+var2-2*p*deviation1*deviation2);
-	double k = (mean1-mean2)/a;	
+	double k;
+	if(deviation1==deviation2 && p==1){
+		a = 0;
+		k = 0;
+	}
+	else
+		k = (mean1-mean2)/a;	
 	
 	double phiK = Distribution(0,1).phi(k);
 	double phiNegativeK = Distribution(0,1).phi(-k);
@@ -150,7 +156,14 @@ Distribution Distribution::getMax(Distribution &one,Distribution &two,double p){
 	double deviation2 = sqrt(var2);
 	
 	double a = sqrt(var1+var2-2*p*deviation1*deviation2);
-	double k = (mean1-mean2)/a;
+
+	double k;
+	if(deviation1==deviation2 && p==1){
+		a = 0;
+		k = 0;
+	}
+	else
+		k = (mean1-mean2)/a;	
 
 	double phiK = Distribution(0,1).phi(k);
 	double phiNegativeK = Distribution(0,1).phi(-k);
@@ -184,7 +197,7 @@ Distribution Distribution::getMinOfIndependentSet(std::vector<Distribution> &var
 Distribution Distribution::getMaxOfCorrelatedSet(std::vector<Node*> &variables){
 	
 	Distribution parentDis =  variables[0]->getParent()->getGDis();
-	Distribution intermedia = variables[0]->getVDis(); 	
+	Distribution intermedia = variables[0]->getDelta()+parentDis; 	
 
 	int i=2;
 	int j=i-1;
@@ -201,9 +214,9 @@ Distribution Distribution::getMaxOfCorrelatedSet(std::vector<Node*> &variables){
 		//	std::cout << variables.size() << std::endl;
 		//	exit(-1);
 		//}	
-		Distribution aR = (**it).getVDis();
+		Distribution aR = (**it).getDelta()+parentDis;
 		k[j-1] = (intermedia.getMean()-aR.getMean())/sqrt((intermedia.getVar()+aR.getVar()));
-		intermedia = getMax(intermedia,(**it).getVDis(),p);
+		intermedia = getMax(intermedia,aR,p);
 		deviations[j-1] = sqrt(intermedia.getVar());
 	}
 	return intermedia;
@@ -227,9 +240,9 @@ Distribution Distribution::getMinOfCorrelatedSet(std::vector<Node*> &variables){
 		//	std::cout << i << std::endl;
 		//	exit(0);
 		//}
-		Distribution aR = (**it).getVDis();
+		Distribution aR = (**it).getDelta()+parentDis;
 		k[j-1] = (intermedia.getMean()-aR.getMean())/sqrt((intermedia.getVar()+aR.getVar()));
-		intermedia = getMin(intermedia,(**it).getVDis(),p);
+		intermedia = getMin(intermedia,aR,p);
 		deviations[j-1] = sqrt(intermedia.getVar());
 	}
 	return intermedia;
@@ -255,12 +268,13 @@ double Distribution::getP(int i,int j,double deviation[],double k[],std::vector<
 	if(j==1)
 		return getP(*(variables[i-1]),*(variables[j-1]));
 	else{
+		double parentV = variables[0]->getParent()->getGDis().getVar();
 		double a = 1/deviation[j-2];
-		double dev = variables[j-1]->getVDis().getVar();
+		double dev = variables[j-1]->getDelta().getVar()+parentV;
 		double b = Distribution(0,1).phi(-k[j-2])*sqrt(dev)*Distribution::getP(*(variables[i-1]),*(variables[j-1]));
 		double dev2=0.0; 
 		if(j-3<0)
-			dev2 = sqrt(variables[j-2]->getVDis().getVar());
+			dev2 = sqrt(variables[j-2]->getDelta().getVar()+parentV);
 		else
 			dev2 = deviation[j-3];
 		

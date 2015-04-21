@@ -30,6 +30,9 @@ double Node::getG() const{
 	return gValue;
 }
 
+double Node::getV() const{
+	return vValue;
+}
 void Node::setVisited(){
 	
 	visited = TRUE;
@@ -42,9 +45,6 @@ void Node::sampleG() {
 		gValue = Distribution(this->parent->getG(),1).getSample();
 }
 
-double Node::getV() const{
-	return vValue;
-}
 
 Node * Node::getChild()  {
 	/*generate children*/
@@ -64,11 +64,25 @@ Node * Node::getChild()  {
 	if(children.empty())
 		return (Node *)NULL;
 	else{
+	//	Node* bestChild;
+	//	double largestValue=-100000.0;
+	//	for(vector<Node*>::iterator it=children.begin();it<children.end();it++){
+	//		Distribution v = (*it)->getVDis();
+	//		if(v==Distribution(0,0))
+	//			v= (*it)->getParent()->getGDis()+(*it)->getDelta();
+	//		
+	//		double weightedSum = v.getMean()+v.getVar();
+	//		if(weightedSum>largestValue){
+	//			bestChild = (*it);
+	//			largestValue = weightedSum;
+	//		}
+	//	}
 		std::mt19937 rng;
                 rng.seed(std::random_device()());
                 std::uniform_int_distribution<std::mt19937::result_type> randomChild(0,children.size()-1);
 
 		return children[randomChild(rng)];
+//		return bestChild;
 	}
 }
 
@@ -82,6 +96,10 @@ void Node::setDelta(const Distribution &dis){
 
 void Node::setVDis(const Distribution &dis){
 	vDis = dis;
+}
+
+void Node::setRollOut(const Distribution &dis){
+	rollOut = dis;
 }
 
 Distribution &Node::getMessageFromParent() {

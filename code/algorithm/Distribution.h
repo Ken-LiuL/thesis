@@ -25,4 +25,6 @@ class Distribution{
 		static Distribution getMinOfCorrelatedSet(std::vector<Node*>&variableSet);
 		double phi(double x);
 		double pdf(double x);
+		static double normalPhi(double x);
+		static double normalPdf(double x);
 };

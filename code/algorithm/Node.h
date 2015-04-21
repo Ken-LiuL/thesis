@@ -43,6 +43,7 @@ class Node{
 		void setDelta(const Distribution &dis);
 		void setGDis(const Distribution &dis);
 		void setVDis(const Distribution &dis);
+		void setRollOut(const Distribution &dis);
 		bool isVisited() const;
 		void sampleG();
 	;	

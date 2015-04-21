@@ -12,30 +12,34 @@
 ComputerPlayer::ComputerPlayer(const char color){
 	this->color = color;
 	this->step = 0;
+	//set seed of random generator
+	this->seed.seed(std::random_device()());
 }
 
 /*random play strategy,select a random move from available moves. If draw,win or lose , return back. And we assume for WHITE player, draw is lose*/
 char  ComputerPlayer::randomPlay(Board &board){
 	std::vector<Board*> states=board.nextBoardStates(this->color);	
+	char result;
 	if(!states.empty()){
-		std::mt19937 rng;
-    		rng.seed(std::random_device()());
-    		std::uniform_int_distribution<std::mt19937::result_type> randomMove(0,states.size()-1);
-		int move = randomMove(rng);
+	   	std::uniform_int_distribution<std::mt19937::result_type> randomMove(0,states.size()-1);
+		int move = randomMove(seed);
 		board = *states[move];
-		this->step +=1 ;
+		this->step += 1 ;
 		if(board.checkWin(this->color)){
-			return this->color;
+			result = this->color;
 		}
+		else
+			result = CONTINUE;
 	}
 	else{
-		return BLACK;
+		result = BLACK;
 	}
+
 	for(int i=0;i<states.size();i++){
 		delete states[i];
 	}
 	
-	return CONTINUE;
+	return result;
 		
 }
 
@@ -44,10 +48,8 @@ char ComputerPlayer::algorithmPlay(Board &b){
 	Distribution prior(0,1);
 	Node root(b,prior,this->color);	
 	root.setVisited();
-	root.sampleG();
-	int i = 1000;
+	int i = 100;
 	while(i-->0){
-		
 		Ep::descent(root);
 	}
 	std::vector<Node*>  children = root.getChildren();
@@ -55,10 +57,10 @@ char ComputerPlayer::algorithmPlay(Board &b){
 	double largestV = -1000;
 	Node * bestChild=NULL;
 	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++){
-		double v = (*it)->getGDis().getSample();
-	//	(**it).getBoard().display();
-	//	std::cout << (**it).getVDis().getMean() << " " << (**it).getVDis().getVar()<< std::endl;
-		if((*it)->getGDis().getVar()==0)
+		double v = (*it)->getVDis().getSample();
+		(**it).getBoard().display();
+		std::cout << (**it).getVDis().getMean() << " " << (**it).getVDis().getVar()<< std::endl;
+		if((*it)->getVDis().getVar()==0)
 			continue;
 		if(v > largestV){
 			bestChild = (*it);	

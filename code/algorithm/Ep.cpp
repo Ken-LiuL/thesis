@@ -14,7 +14,6 @@ Distribution Ep::descent(Node &n){
 	if(n.isVisited()){
 		Node* c = n.getChild();
 		if(c!=NULL){
-			c->sampleG();
 			/*update message to c*/
 			Ep::updateMessageFromParent(*c,n);
 			/*continue to descent*/
@@ -40,7 +39,13 @@ Distribution Ep::descent(Node &n){
 		
 		/*call function to calculated the approximate message*/
 		Distribution rollOut = Ep::getMessageFromRollOut(n,length,result);	
-		n.setGDis(n.getGDis()*rollOut);
+		n.setRollOut(rollOut);
+
+		if(length==0)
+			n.setGDis(rollOut);
+		else
+			n.setGDis(n.getGDis()*rollOut);
+
 		/*update V distribution =  delta + V*/
 		Distribution v = Ep::calculateDelta(stored,lastPlayer);
 		n.setDelta(v);
@@ -116,32 +121,23 @@ void Ep::updateParentVDistribution(Node &n){
 	std::vector<Node*> children = parent->getChildren();
 
         //temporarily use average delta to approximate the real delta
-	Distribution deltas;
-	int counter=0;
 	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++){
 		if((*it)->getDelta()==Distribution(0,0)){
-			continue;
-		}
-		else{
-			deltas = deltas+(*it)->getDelta();
-			counter++;
+			int length = 0;
+			int result = 0;
+			char lastPlayer;
+			std::vector<int> stored(0);
+			Ep::doRollout((**it),length,result,lastPlayer,stored);
+			Distribution v = Ep::calculateDelta(stored,lastPlayer);
+			(*it)->setDelta(v);
 		}
 	}
-	//approximate V-Dis as G-Parent+averageDelta
-	Distribution averageDelta(deltas.getMean()/counter,deltas.getVar()/counter);
-	
-	for(std::vector<Node*>::iterator it= children.begin();it<children.end();it++){
-		if((*it)->getVDis()==Distribution(0,0))
-			(*it)->setDelta(averageDelta);		
-
-         }
 
 	Distribution newV;
 	if(parent->getColor()==MAX)
 		newV = Distribution::getMaxOfCorrelatedSet(children);
 	else
 		newV = Distribution::getMinOfCorrelatedSet(children);
-
 	parent->setVDis(newV);
 }
 
@@ -181,7 +177,7 @@ void Ep::updateMessageFromParent(Node &child,Node &parent){
 	Distribution messageExceptC = parent.getGDis()/child.getMessageToParent();
 	Distribution messageIntegral = Distribution(messageExceptC.getMean(),messageExceptC.getVar()+1);
 	child.setMessageFromParent(messageIntegral);
-	child.setGDis(child.getGDis()*child.getMessageFromParent());
+	child.setGDis(child.getGDis()*messageIntegral);
 }
 
 void Ep::updateMessageExceptRollOut(Node &child,Node &parent){

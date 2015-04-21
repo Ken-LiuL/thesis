@@ -46,6 +46,8 @@ void Board::initialize(){
 /*return all possible next board states.Argument color specify who make moves*/
 std::vector<Board*> Board::nextBoardStates(const char color){
 	std::vector<Board*> states(0);
+	if(checkWin(color==BLACK?WHITE:BLACK))
+		return states;
 	for(int i=0;i<size;i++)
 		for(int j=0;j<size;j++){
 			if(board[i][j]==EMPTY){
@@ -136,7 +138,7 @@ int main(){
 	int times=100;
 	int winTimes =0;
 	while(times-->0){
-		Board start(10);
+		Board start(4);
 		start.display();
 	
 		ComputerPlayer player1(WHITE);

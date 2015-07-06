@@ -10,14 +10,14 @@
 */
 
 
-Distribution Ep::descent(Node &n){
+Distribution Ep::descent(Node &n,int &counter){
 	if(n.isVisited()){
 		Node* c = n.getChild();
 		if(c!=NULL){
 			/*update message to c*/
 			Ep::updateMessageFromParent(*c,n);
 			/*continue to descent*/
-			Distribution newMessage = descent(*c);
+			Distribution newMessage = descent(*c,counter);
 			/*update marginal of n*/
 			Ep::updateMessageToParent(*c,n,newMessage);
 		}
@@ -36,7 +36,6 @@ Distribution Ep::descent(Node &n){
 		char lastPlayer;
 		std::vector<int> stored(0);
 		Ep::doRollout(n,length,result,lastPlayer,stored);
-		
 		/*call function to calculated the approximate message*/
 		Distribution rollOut = Ep::getMessageFromRollOut(n,length,result);	
 		n.setRollOut(rollOut);
@@ -54,7 +53,6 @@ Distribution Ep::descent(Node &n){
 	}
 	Distribution messageExceptP = n.getGDis()/n.getMessageFromParent();
 	Ep::updateParentVDistribution(n);
-
 	return Distribution(messageExceptP.getMean(),messageExceptP.getVar()+1);
 
 }
@@ -145,31 +143,32 @@ Distribution Ep::getMessageFromRollOut(Node &boundary,const int length,const int
 	Distribution prior = Distribution(boundary.getGDis().getMean(),boundary.getGDis().getVar()+length);
 	double priorMean = prior.getMean();
 	double priorVar = prior.getVar();
+	double priorDev = sqrt(priorVar);
 
-	double m,v,n,d,p,secondMoment;
+	double firstMoment,secondMoment,p,k,n,d,v;
 	double meanSqaure = pow(priorMean,2);
+	k = priorMean/priorDev;
 	if(result>0){
 		/*first moment*/
-		n = Distribution(0,priorVar).pdf(priorMean);
-		d = 1- prior.phi(0);
+		n = Distribution::normalPdf(k);
+		d = Distribution::normalPhi(k);
 		/*seconde moment*/
-		p = (1-(-priorMean*n)/d);
+		p = (1+k*n/d);
+		firstMoment = priorMean + priorDev*(n/d);
 		
 	}
 	else{
 		/*first moment*/
-		n = -(Distribution(0,priorVar).pdf(priorMean));
-		d =  prior.phi(0);
+		n =  Distribution::normalPdf(k);
+		d =  Distribution::normalPhi(-k);
 		/*second moment*/
-		p  = (1-(priorMean*(-n)/d));
-
+		p  = (1-k*n/d);
+		firstMoment = priorMean - priorDev*(n/d);
 		}
-	m = priorMean + priorVar*(n/d);
 	secondMoment =  meanSqaure+ priorVar*p;
 	/*variance*/
-	v = secondMoment - pow(m,2);
-	
-	return Distribution(m,v+length);
+	v = secondMoment - firstMoment*firstMoment;
+	return Distribution(firstMoment,v+length);
 }
 
 void Ep::updateMessageFromParent(Node &child,Node &parent){

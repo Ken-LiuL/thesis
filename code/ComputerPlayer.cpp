@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include <vector>
 #include <random>
+#include <fstream>
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
@@ -49,17 +50,16 @@ char ComputerPlayer::algorithmPlay(Board &b){
 	Node root(b,prior,this->color);	
 	root.setVisited();
 	int i = 100;
+	int counter = 0;
 	while(i-->0){
-		Ep::descent(root);
+		Ep::descent(root,counter);
 	}
 	std::vector<Node*>  children = root.getChildren();
-
 	double largestV = -1000;
+	
 	Node * bestChild=NULL;
 	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++){
 		double v = (*it)->getVDis().getSample();
-		(**it).getBoard().display();
-		std::cout << (**it).getVDis().getMean() << " " << (**it).getVDis().getVar()<< std::endl;
 		if((*it)->getVDis().getVar()==0)
 			continue;
 		if(v > largestV){

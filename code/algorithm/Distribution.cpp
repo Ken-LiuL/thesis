@@ -7,28 +7,36 @@
 #include <iomanip>
 
 
-/*low level class, deal with specific distribution calculation , provide some primitive function to do distribution sampling and distribution mulplication*/
+/**************************************************************************
+ * Low level class, deal with specific Gaussian distribution operations
+ *It provides some primitive functions to do distribution sampling and distribution mulplication, addition , substraction and division.
+ *Also functions that provide MAX/MIN over a set of correlated or independentvariables are included. 
+ **************************************************************************
+*/
+
+
 Distribution::Distribution(const double m,const double v){
 	mean = m;
 	var = v;
 }
 
-
+/*Mulplication of two Gaussian distributions*/
 Distribution Distribution::operator*(const Distribution &dis){
 	double var1 = dis.getVar();
 	double var2 = this->var;
 	double mean1 = dis.getMean();
 	double mean2 = this->mean;
-
+	/* When one of the distribution is (mean,0)*/
 	if(var1==0)
-		return Distribution(mean2,var2);
+		return  Distribution(mean2,var2);
 	else if(var2==0)
 		return Distribution(mean1,var1);
 
 	double newVar = 1/(1/var1 + 1/var2);
 	double newMean = (mean1/var1 + mean2/var2)*newVar;
+	
+	return  Distribution(newMean,newVar);
 
-	return Distribution(newMean,newVar);
 
 }
 
@@ -52,6 +60,9 @@ Distribution Distribution::operator-(const Distribution &dis){
 	return Distribution(mean1-mean2,var1-var2);
 }
 
+/* Division of two Gaussian distributions. If they are the same, then result   is Distribution(0,0)
+*/ 
+
 Distribution Distribution::operator/(const Distribution &dis){
 	double var1 = this->var;
 	double mean1 = this->mean;
@@ -59,9 +70,10 @@ Distribution Distribution::operator/(const Distribution &dis){
 	double var2 = dis.getVar();
 	double mean2  =  dis.getMean();	
 
+	/* Consider situations when the variance of two distributions are the same and when variance of the divisor is zero*/
 	if(var2==0)
 		return Distribution(mean1,var1);
-	if(var1==var2)
+	if(var1 == var2)
 		return Distribution(0,0);
 
 	double newVar = 1/(1/var1 - 1/var2);
@@ -71,6 +83,7 @@ Distribution Distribution::operator/(const Distribution &dis){
 
 }
 
+/* Two Gaussian distributions are equal if and only if their means and variants are equivalent respectively*/
 bool Distribution::operator==(const Distribution& dis){
 	double var1 = this->var;
 	double mean1 = this->mean;
@@ -84,6 +97,11 @@ bool Distribution::operator==(const Distribution& dis){
 		return 0;
 }
 
+/*====================================================================
+ The following four functions are used for generate value of PDF and CDF.
+ Methods normalPdf and normalPhi are static methods, they generate value of  PDF and CDF of standard Gaussian.
+ ====================================================================
+*/
 double Distribution::pdf(double x){
 	double a = (x-this->mean)*(x-this->mean);
 	double b =  -a /(2*this->var);
@@ -148,27 +166,30 @@ double Distribution::phi(double x){
 
 }
 
-//checked, no bugs
-Distribution Distribution::getMin(Distribution &one,Distribution &two,double p){
-	double var1 = one.getVar();
-	double mean1 = one.getMean();
+/* Min of two Gaussian distributions; P is the correlated coefficient*/
+Distribution Distribution::getMin(Distribution &dis1,Distribution &dis2,double p){
+	double var1 = dis1.getVar();
+	double mean1 = dis1.getMean();
 	double deviation1 = sqrt(var1);
 
-	double var2 = two.getVar();
-	double mean2 = two.getMean();
+	double var2 = dis2.getVar();
+	double mean2 = dis2.getMean();
 	double deviation2 = sqrt(var2);
+	
+	/*procedure to calculate the min*/
 	double a = sqrt(var1+var2-2*p*deviation1*deviation2);
 	double k;
-	//precision and if p==1 and one==two
-	if((var1==var2)&&(1-p)<0.0000001){
+
+	/*double value has precision problem, and if p==1 and one==two then Min(one,two) = one*/
+	if((dis1 == dis2) && (1-p)<0.0000001){
 		return Distribution(mean1,var1);
 	}
 	else{
 		k = (mean1-mean2)/a;	
 	}
-	double phiK = Distribution(0,1).phi(k);
+
+	double phiK = Distribution::normalPhi(k);
 	double phiNegativeK = Distribution::normalPhi(-k);
-	
 	double pdfNegativeK = Distribution::normalPdf(-k);
 	
 	double firstMoment = mean1*phiNegativeK + mean2*phiK - a*pdfNegativeK;
@@ -177,21 +198,21 @@ Distribution Distribution::getMin(Distribution &one,Distribution &two,double p){
 	return Distribution(firstMoment,secondMoment-pow(firstMoment,2));
 }
 
-//checked, no bugs
-Distribution Distribution::getMax(Distribution &one,Distribution &two,double p){
-	double var1 = one.getVar();
-	double mean1 = one.getMean();
+/* Max of two Gaussian distributions; P is the correlated coefficient*/
+Distribution Distribution::getMax(Distribution &dis1,Distribution &dis2,double p){
+	double var1 = dis1.getVar();
+	double mean1 = dis1.getMean();
 	double deviation1 = sqrt(var1);
 	
-	double var2 = two.getVar();
-	double mean2 = two.getMean();
+	double var2 = dis2.getVar();
+	double mean2 = dis2.getMean();
 	double deviation2 = sqrt(var2);
 	
 	double a = sqrt(var1+var2-2*p*deviation1*deviation2);
-
 	double k;
-	//precision and in case that p==1 and one==two
-	if((var1==var2)&&(1-p)<0.000001){
+
+	/*double value has precision problem, and if p==1 and one==two then Min(one,two) = one*/
+	if((dis1 == dis2)&&(1-p)<0.000001){
 		return Distribution(mean1,var1);
 	}
 	else{
@@ -199,7 +220,6 @@ Distribution Distribution::getMax(Distribution &one,Distribution &two,double p){
 	}
 	double phiK = Distribution::normalPhi(k);
 	double phiNegativeK = Distribution::normalPhi(-k);
-	
 	double pdfK = Distribution::normalPdf(k);
 	
         double firstMoment = mean1*phiK + mean2*phiNegativeK + a*pdfK;
@@ -208,6 +228,7 @@ Distribution Distribution::getMax(Distribution &one,Distribution &two,double p){
 	return Distribution(firstMoment,secondMoment-pow(firstMoment,2));
 }
 	
+/* Max of a set of Independent Gaussian variables*/
 Distribution Distribution::getMaxOfIndependentSet(std::vector<Distribution> &variables){
 	Distribution intermedia = variables[0];
 	for(std::vector<Distribution>::iterator it=variables.begin()+1;it<variables.end();it++){
@@ -218,6 +239,7 @@ Distribution Distribution::getMaxOfIndependentSet(std::vector<Distribution> &var
 
 }
 
+/* Min of a set of Independent Gaussian variables*/
 Distribution Distribution::getMinOfIndependentSet(std::vector<Distribution> &variables){
 	Distribution intermedia = variables[0];
 	for(std::vector<Distribution>::iterator it=variables.begin()+1;it<variables.end();it++){
@@ -225,6 +247,7 @@ Distribution Distribution::getMinOfIndependentSet(std::vector<Distribution> &var
 	}
         return intermedia;
 }
+
 /*has not finished implementation*/
 Distribution Distribution::getMaxOfCorrelatedSet(std::vector<Node*> &variables){
 	
@@ -305,7 +328,7 @@ Distribution Distribution::getMinOfCorrelatedSet(std::vector<Node*> &variables){
 
 
 
-//fixed! p = var(g)/(var(g)+var(delta1))*(var(g)+var(delta2)))
+/* p = var(g)/(var(g)+var(delta1))*(var(g)+var(delta2)))*/
 double Distribution::getP(Node &one,Node &two){
 	double varParent= one.getParent()->getGDis().getVar();
 	

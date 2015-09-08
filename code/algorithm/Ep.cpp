@@ -10,14 +10,14 @@
 */
 
 
-Distribution Ep::descent(Node &n,int &counter){
+Distribution Ep::descent(Node &n){
 	if(n.isVisited()){
 		Node* c = n.getChild();
 		if(c!=NULL){
 			/*update message to c*/
 			Ep::updateMessageFromParent(*c,n);
 			/*continue to descent*/
-			Distribution newMessage = descent(*c,counter);
+			Distribution newMessage = descent(*c);
 			/*update marginal of n*/
 			Ep::updateMessageToParent(*c,n,newMessage);
 		}
@@ -39,7 +39,7 @@ Distribution Ep::descent(Node &n,int &counter){
 		/*call function to calculated the approximate message*/
 		Distribution rollOut = Ep::getMessageFromRollOut(n,length,result);	
 		n.setRollOut(rollOut);
-
+		/*check whether the rollout-ed node is a leaf node*/
 		if(length==0)
 			n.setGDis(rollOut);
 		else
@@ -87,6 +87,7 @@ void Ep::doRollout(Node &n,int &l,int &r,char &lastPlayer,std::vector<int> &stor
 	r = result == 'X' ? 1 : -1;
 }
 
+/*Assume branch factor and depth are constant,which obviously are not*/
 Distribution Ep::calculateDelta(std::vector<int> &branch,char lastPlayer){
 	if(branch.size()==0)
 		return Distribution(0,0);
@@ -111,14 +112,14 @@ Distribution Ep::calculateDelta(std::vector<int> &branch,char lastPlayer){
 	return delta;
 }
 
+/*Update the V distribution of parent*/
 void Ep::updateParentVDistribution(Node &n){
 	Node *parent = n.getParent();
 	if(parent==NULL)
 		return;
 	
 	std::vector<Node*> children = parent->getChildren();
-
-        //temporarily use average delta to approximate the real delta
+        //when delta are unknown,temporarily use average delta to approximate the real delta
 	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++){
 		if((*it)->getDelta()==Distribution(0,0)){
 			int length = 0;
@@ -139,6 +140,7 @@ void Ep::updateParentVDistribution(Node &n){
 	parent->setVDis(newV);
 }
 
+/*Get message from RollOut result*/
 Distribution Ep::getMessageFromRollOut(Node &boundary,const int length,const int result){
 	Distribution prior = Distribution(boundary.getGDis().getMean(),boundary.getGDis().getVar()+length);
 	double priorMean = prior.getMean();
@@ -171,6 +173,7 @@ Distribution Ep::getMessageFromRollOut(Node &boundary,const int length,const int
 	return Distribution(firstMoment,v+length);
 }
 
+/*Update the message from its parent*/
 void Ep::updateMessageFromParent(Node &child,Node &parent){
 	child.setGDis(child.getGDis()/child.getMessageFromParent());
 	Distribution messageExceptC = parent.getGDis()/child.getMessageToParent();
@@ -179,6 +182,7 @@ void Ep::updateMessageFromParent(Node &child,Node &parent){
 	child.setGDis(child.getGDis()*messageIntegral);
 }
 
+/*Update message from rollout*/
 void Ep::updateMessageExceptRollOut(Node &child,Node &parent){
 	Distribution newParent = parent.getGDis()/parent.getRollOut();
 	child.setGDis(child.getGDis()/child.getMessageFromParent());
@@ -188,6 +192,7 @@ void Ep::updateMessageExceptRollOut(Node &child,Node &parent){
 	child.setMessageFromParent(messageIntegral);
 }
 
+/*update the messsage to parent*/
 void Ep::updateMessageToParent(Node &child,Node &parent,Distribution &message){
 	
 	parent.setGDis(parent.getGDis()/child.getMessageToParent()*message);

@@ -49,17 +49,20 @@ char ComputerPlayer::algorithmPlay(Board &b){
 	Distribution prior(0,1);
 	Node root(b,prior,this->color);	
 	root.setVisited();
-	int i = 100;
-	int counter = 0;
-	while(i-->0){
-		Ep::descent(root,counter);
+	int descentTimes = 100;
+	while(descentTimes-->0){
+		Ep::descent(root);
 	}
 	std::vector<Node*>  children = root.getChildren();
+
 	double largestV = -1000;
 	
 	Node * bestChild=NULL;
+	/*Select best move according to v value*/
 	for(std::vector<Node*>::iterator it=children.begin();it<children.end();it++){
 		double v = (*it)->getVDis().getSample();
+		std::cout << (*it)->getVDis().getVar() << (*it)->getVDis().getMean() << std::endl;
+		(*it)->getBoard().display();
 		if((*it)->getVDis().getVar()==0)
 			continue;
 		if(v > largestV){
@@ -68,6 +71,7 @@ char ComputerPlayer::algorithmPlay(Board &b){
 		}	
 
 	}
+	/*check whether the game is over, or should be continued*/
 	if(bestChild == NULL){
 		return  this->color==WHITE?BLACK:WHITE;
 	}

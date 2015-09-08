@@ -135,12 +135,12 @@ void Board::makeMove(const int i,const int j, const char color){
 
 
 int main(){
-	int times=100;
+	int rounds=100;
 	int winTimes =0;
-	while(times-->0){
+	while(rounds-->0){
 		Board start(4);
 		start.display();
-	
+
 		ComputerPlayer player1(WHITE);
 		ComputerPlayer player2(BLACK);
 

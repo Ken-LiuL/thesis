@@ -248,7 +248,7 @@ Distribution Distribution::getMinOfIndependentSet(std::vector<Distribution> &var
         return intermedia;
 }
 
-/*has not finished implementation*/
+/*Max of two correlated Gaussian distribution*/
 Distribution Distribution::getMaxOfCorrelatedSet(std::vector<Node*> &variables){
 	
 	Distribution parentDis =  variables[0]->getParent()->getGDis();
@@ -267,15 +267,7 @@ Distribution Distribution::getMaxOfCorrelatedSet(std::vector<Node*> &variables){
 		//precision problem
 		if(p>1)
 			p=1.0;
-		//std::cout << p << std::endl;
-		//std::cout << "p-max: " << p << std::endl;
-		//if(p>1 || p<-1){
-		//	std::cout << i << "," << j << std::endl;
-		//	variables[i-1]->getBoard().display();
-		//	variables[j-1]->getBoard().display();
-		//	std::cout << variables.size() << std::endl;
-		//	exit(-1);
-		//}	
+			
 		Distribution aR ;
 		if((**it).getVDis()==Distribution(0,0))
 			aR= (**it).getDelta()+parentDis;
@@ -289,6 +281,7 @@ Distribution Distribution::getMaxOfCorrelatedSet(std::vector<Node*> &variables){
 
 }
 
+/*Min of two correlated Gaussian distribution*/
 Distribution Distribution::getMinOfCorrelatedSet(std::vector<Node*> &variables){
 	Distribution parentDis = variables[0]->getParent()->getGDis();
 	Distribution intermedia ;
@@ -306,14 +299,7 @@ Distribution Distribution::getMinOfCorrelatedSet(std::vector<Node*> &variables){
 		//double precision
 		if(p>1)
 			p=1.0;
-		//std::cout << p << std::endl;
-		//std::cout << "p-min " << p << std::endl;
-		//if(p>1 || p < -1){
-		//	variables[i-1]->getBoard().display();	
-		//	variables[j-1] -> getBoard().display();
-		//	std::cout << i << std::endl;
-		//	exit(0);
-		//}
+
 		Distribution aR ;
 		if((**it).getVDis()==Distribution(0,0))
 			aR= (**it).getDelta()+parentDis;
